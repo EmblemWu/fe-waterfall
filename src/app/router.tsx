@@ -5,14 +5,19 @@ import { DetailPage } from '../pages/DetailPage'
 import { FavoritesPage } from '../pages/FavoritesPage'
 import { FeedPage } from '../pages/FeedPage'
 
-export const router = createBrowserRouter([
+export const router = createBrowserRouter(
+  [
+    {
+      path: '/',
+      element: <AppLayout />,
+      children: [
+        { index: true, element: <FeedPage /> },
+        { path: 'favorites', element: <FavoritesPage /> },
+        { path: 'detail/:id', element: <DetailPage /> },
+      ],
+    },
+  ],
   {
-    path: '/',
-    element: <AppLayout />,
-    children: [
-      { index: true, element: <FeedPage /> },
-      { path: 'favorites', element: <FavoritesPage /> },
-      { path: 'detail/:id', element: <DetailPage /> },
-    ],
+    basename: import.meta.env.BASE_URL,
   },
-])
+)
