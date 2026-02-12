@@ -78,10 +78,12 @@ pnpm e2e
 
 ## 部署（GitHub Pages）
 
+Demo: `https://emblemwu.github.io/fe-waterfall/`
+
 1. 推送到 GitHub 仓库（默认分支 `main`）。
 2. 在仓库 `Settings -> Pages` 中将 source 设置为 `GitHub Actions`。
 3. `Deploy Pages` workflow 会在 push `main` 后自动部署。
-4. Demo URL 形如：`https://<your-github-name>.github.io/fe-waterfall/`
+4. 本仓库当前地址：`https://emblemwu.github.io/fe-waterfall/`
 
 ## 已知限制与后续
 
