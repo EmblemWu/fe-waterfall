@@ -13,7 +13,7 @@ interface FeedCardProps {
 }
 
 export function FeedCard({ item, isFavorite, onFavoriteToggle, onMeasure }: FeedCardProps) {
-  const [loaded, setLoaded] = useState(false)
+  const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const rootRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -38,15 +38,15 @@ export function FeedCard({ item, isFavorite, onFavoriteToggle, onMeasure }: Feed
         className={styles.mediaWrap}
         style={{ aspectRatio: `${item.imageWidth} / ${item.imageHeight}` }}
       >
-        {!loaded ? <Skeleton height={180} /> : null}
+        {status === 'loading' ? <Skeleton height={180} /> : null}
+        {status === 'error' ? <div className={styles.fallback}>Image unavailable</div> : null}
         <img
-          className={styles.media}
+          className={`${styles.media} ${status === 'ready' ? styles.mediaReady : styles.mediaLoading}`}
           src={item.imageUrl}
           alt={item.title}
           loading="lazy"
-          onLoad={() => setLoaded(true)}
-          onError={() => setLoaded(true)}
-          style={{ display: loaded ? 'block' : 'none' }}
+          onLoad={() => setStatus('ready')}
+          onError={() => setStatus('error')}
         />
       </div>
       <div className={styles.meta}>

@@ -19,6 +19,25 @@
   transition: transform 0.25s ease;
 }
 
+.mediaLoading {
+  opacity: 0;
+}
+
+.mediaReady {
+  opacity: 1;
+}
+
+.fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 140px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #e2e8f0, #cbd5e1);
+  color: #334155;
+  font-size: 12px;
+}
+
 .card:hover .media {
   transform: scale(1.015);
 }
