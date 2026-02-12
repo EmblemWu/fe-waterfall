@@ -1,0 +1,14 @@
+* Fe-Waterfall User Guide
+
+** Start
+- Run =pnpm install= then =pnpm dev=.
+- Open root page and browse feed cards.
+
+** Main Paths
+- Feed: search, filter, infinite scroll, open detail.
+- Detail: press =Esc= to go back.
+- Favorites: view all locally saved favorites.
+
+** Validation
+- Run =pnpm lint typecheck test build=.
+- Run =pnpm e2e= for the key end-to-end flow.
