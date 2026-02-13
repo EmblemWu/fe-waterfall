@@ -57,7 +57,7 @@
 - [x] Playwright 路径1：首页滚动 -> 卡片 modal -> ESC 关闭 -> 位置保留
 - [x] Playwright 路径2：直接访问 `/explore/:id` -> 全屏详情可用
 - [x] `pnpm lint/typecheck/test/build/e2e` 全绿
-- [ ] CI 全绿
+- [x] CI 全绿
       验收：本地命令全通过 + GitHub Actions 成功
 
 ### P0-8 文档与性能证据
