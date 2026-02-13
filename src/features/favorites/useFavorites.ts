@@ -23,9 +23,14 @@ export function useFavorites() {
     })
   }, [])
 
+  const removeManyFavorites = useCallback((ids: string[]) => {
+    setFavoriteIds((previous) => previous.filter((id) => !ids.includes(id)))
+  }, [])
+
   return {
     favoriteIds,
     favoriteSet,
     toggleFavorite,
+    removeManyFavorites,
   }
 }

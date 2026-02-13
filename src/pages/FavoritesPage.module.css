@@ -1,0 +1,28 @@
+.page {
+  display: grid;
+  gap: 12px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.row {
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.desc {
+  margin: 6px 0;
+  color: var(--text-muted);
+}

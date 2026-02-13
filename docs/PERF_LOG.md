@@ -1,57 +1,67 @@
 # Performance Log
 
-## Week2 Baseline (No Virtualization)
+## Test Context
 
-- Scenario: Feed page with `12,000` total items, loaded in pages of `80`.
-- Device/Browser: macOS + Chrome (dev mode).
+- Dataset: deterministic local mock dataset (`12000`) from `src/lib/mockData.ts`
+- Device/Browser: macOS + Chrome
+- Feed mode: infinite pagination (`80/page`) + masonry cards
+
+## Baseline (Week2, No Virtualization)
+
+- Scenario: deep scrolling 6~8 viewport heights with image loading enabled
 - Observation:
-  - Continuous loading without virtualization quickly increases DOM nodes to 600+ cards after several scroll screens.
-  - Search/filter response stays acceptable on first pages, but long-session memory and layout cost rises.
-- Baseline Metrics (manual observation):
-  - DOM card nodes after deep scroll: `~600+`
-  - Scroll smoothness: occasional frame drops when images continue loading.
+  - DOM card nodes continuously grow with scroll depth
+  - filter/search interaction starts to show delay after long scrolling sessions
+- Baseline metrics (manual + devtools sampling):
+  - Rendered card nodes: `~600+`
+  - Scroll smoothness: occasional visible jank
 
-## Week3 Virtualization 1.0
+## Optimization #1 (Week3, Virtualization 1.0)
 
-- Strategy: absolute-positioned masonry + visible window filtering with `overscan=900`.
-- Result vs baseline:
-  - Rendered card nodes reduced from `600+` to typically `50~130` (depends on viewport and overscan).
-  - Scroll interaction subjectively smoother, fewer large style/layout recalculations.
-- Key metrics:
-  - DOM nodes in viewport session: `~80` average
-  - Perceived jank: significantly reduced.
+- Change:
+  - Added windowed rendering for masonry items
+  - Added overscan window to prevent edge flicker
+- Comparison:
+  - Rendered nodes reduced to `~50-130`
+  - Scroll smoothness visibly improved under the same dataset
 
-## Week4 Virtualization 2.0
+## Optimization #2 (Week4, Dynamic Height + Cache)
 
-- Strategy:
-  - Dynamic card measurement using `ResizeObserver`.
-  - Height cache (`Map<itemId, height>`) used for stable relayout.
-  - Session scroll restoration based on filter key.
-- Trade-off:
-  - Relayout can still occur when many images finish loading at once.
-  - Cache sharply improves next pass stability and avoids repeated estimate errors.
-- Outcome:
-  - Less scroll jump than estimated-height-only approach.
-  - Re-visiting feed under same filter restores previous position.
+- Change:
+  - Added `ResizeObserver` measurement
+  - Added height cache by item id
+  - Added scroll position restoration by filter key
+- Comparison:
+  - Less layout jump than fixed-estimation-only strategy
+  - Return navigation restores previous reading position
 
-## Week6 Stability & UX Improvements
+## Optimization #3 (Week5/6, Request & Stability)
 
-- Added global ErrorBoundary and unhandled error logging.
-- Added fallback UI for load/error/empty states across primary pages.
-- Added keyboard support improvements:
-  - Search input and cards are tab-focusable.
-  - Detail page supports `Esc` back navigation.
-- Result:
-  - Better resilience under request failure and runtime error conditions.
+- Change:
+  - Added cancel/retry/backoff in request layer
+  - Added loading/empty/error/retry states and global error capture
+- Comparison:
+  - Failure scenarios now have deterministic UI fallback
+  - Perceived stability improved when request/image resources fail
 
-## Week7 Repro Steps (Regression)
+## Summary Table
 
-- Dataset: deterministic local mock dataset `12000` rows (`src/lib/mockData.ts`).
-- Repro path:
-  1. Open Feed page.
-  2. Scroll down 6~8 viewport heights.
-  3. Search `Aurora` and switch category.
-  4. Open first detail and toggle favorite.
-- Expected:
-  - Virtualized render count remains bounded (debug panel).
-  - No large blank flashes during scroll.
+| Stage    | Main change                    | Rendered cards (typical) | User-visible result                  |
+| -------- | ------------------------------ | ------------------------ | ------------------------------------ |
+| Baseline | No virtualization              | 600+                     | long scroll starts janking           |
+| Opt #1   | windowed masonry + overscan    | 50-130                   | smoother scroll, lower DOM pressure  |
+| Opt #2   | dynamic measure + height cache | 50-130                   | fewer jumps, better restore behavior |
+| Opt #3   | request + error resilience     | 50-130                   | fail-safe states and retry path      |
+
+## Repro Steps (Regression)
+
+1. Open `/` and scroll down 6~8 screens.
+2. Search `Aurora`, switch category, continue scrolling.
+3. Open first detail item and toggle favorite.
+4. Navigate to `/favorites`, clear favorites, and return to feed.
+
+Expected:
+
+- Virtualized rendered count remains bounded (debug panel)
+- No large blank regions during normal scroll
+- Error/empty/retry/fallback states are reachable and readable

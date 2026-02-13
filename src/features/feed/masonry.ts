@@ -32,6 +32,7 @@ export function buildMasonryLayout(
   heightCache: Map<string, number>,
 ): MasonryLayout {
   return measure('buildMasonryLayout', () => {
+    // Greedy shortest-column placement keeps masonry visually balanced.
     const effectiveWidth = Math.max(containerWidth, minColumnWidth)
     const columnCount = Math.max(1, Math.floor((effectiveWidth + gap) / (minColumnWidth + gap)))
     const columnWidth = (effectiveWidth - gap * (columnCount - 1)) / columnCount
@@ -74,6 +75,7 @@ export function getVisiblePositions(
   viewportHeight: number,
   overscan: number,
 ): MasonryPosition[] {
+  // Keep a buffered window to avoid visible pop-in at viewport edges.
   const min = Math.max(0, scrollTop - overscan)
   const max = scrollTop + viewportHeight + overscan
 

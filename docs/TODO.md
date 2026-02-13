@@ -57,3 +57,13 @@
 - [x] Add GitHub Pages deployment workflow
 - [x] Final code/doc cleanup
 - [x] Complete all roadmap checkboxes and final project summary
+
+## Resume Upgrade Sprint (Post Week8)
+
+- [x] Add route-level `errorElement` and 404 page for better routing UX
+- [x] Add favorites management action (clear current page favorites)
+- [x] Add second e2e path for favorites management flow
+- [x] Add detail image load failure fallback UI
+- [x] Expand CI to include e2e validation job
+- [x] Strengthen README (user paths, trade-offs, maintenance notes)
+- [x] Refine `docs/PERF_LOG.md` with optimization comparison table

@@ -32,6 +32,7 @@ export function useVirtualMasonry({
     if (previous != null && Math.abs(previous - height) < 2) {
       return
     }
+    // Re-layout only when measurement changed materially.
     heightCache.current.set(id, height)
     setLayoutVersion((v) => v + 1)
   }, [])

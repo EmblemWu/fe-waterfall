@@ -15,7 +15,7 @@ trap cleanup EXIT
 
 for _ in $(seq 1 60); do
   if curl -fsS "http://$HOST:$PORT" >/tmp/fe-waterfall-e2e-index.html 2>/dev/null; then
-    if rg -q '<div id="root"></div>' /tmp/fe-waterfall-e2e-index.html; then
+    if grep -q '<div id="root"></div>' /tmp/fe-waterfall-e2e-index.html; then
       break
     fi
   fi

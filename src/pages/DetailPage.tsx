@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 
 import styles from './DetailPage.module.css'
@@ -13,6 +13,7 @@ export function DetailPage() {
   const navigate = useNavigate()
   const detail = useDetail(id)
   const { favoriteSet, toggleFavorite } = useFavoritesContext()
+  const [imageFailed, setImageFailed] = useState(false)
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -47,7 +48,16 @@ export function DetailPage() {
           </Button>
         </div>
       </div>
-      <img className={styles.image} src={item.imageUrl} alt={item.title} />
+      {imageFailed ? (
+        <div className={styles.imageFallback}>图片加载失败，已展示文本信息</div>
+      ) : (
+        <img
+          className={styles.image}
+          src={item.imageUrl}
+          alt={item.title}
+          onError={() => setImageFailed(true)}
+        />
+      )}
       <p className={styles.desc}>{item.description}</p>
       <p>分类：{item.category}</p>
       <p>标签：{item.tags.join(', ')}</p>
