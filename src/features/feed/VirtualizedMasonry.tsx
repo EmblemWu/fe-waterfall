@@ -18,6 +18,7 @@ interface VirtualizedMasonryProps {
   onToggleLike: (id: string) => Promise<void>
   onToggleFollow: (authorId: string) => Promise<void>
   enableVirtualization: boolean
+  showPanel?: boolean
 }
 
 export function VirtualizedMasonry({
@@ -34,6 +35,7 @@ export function VirtualizedMasonry({
   onToggleLike,
   onToggleFollow,
   enableVirtualization,
+  showPanel = false,
 }: VirtualizedMasonryProps) {
   const { containerRef, layout, visiblePositions, onMeasure, cacheSize } = useVirtualMasonry({
     items,
@@ -74,13 +76,15 @@ export function VirtualizedMasonry({
         {enableVirtualization ? '虚拟渲染' : '全量渲染'}: 当前渲染 {renderPositions.length} / 总计{' '}
         {items.length}，高度缓存 {cacheSize}
       </p>
-      <PerformancePanel
-        rendered={renderPositions.length}
-        total={items.length}
-        cacheSize={cacheSize}
-        overscan={overscan}
-        virtualizationEnabled={enableVirtualization}
-      />
+      {showPanel ? (
+        <PerformancePanel
+          rendered={renderPositions.length}
+          total={items.length}
+          cacheSize={cacheSize}
+          overscan={overscan}
+          virtualizationEnabled={enableVirtualization}
+        />
+      ) : null}
     </section>
   )
 }

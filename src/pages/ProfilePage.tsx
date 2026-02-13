@@ -63,7 +63,7 @@ export function ProfilePage() {
                     <strong>{item.title}</strong>
                     <p className={styles.meta}>{item.authorName}</p>
                   </div>
-                  <Link to={`/detail/${item.id}`}>查看详情</Link>
+                  <Link to={`/explore/${item.id}`}>查看详情</Link>
                 </div>
               ))}
             </div>
@@ -83,7 +83,7 @@ export function ProfilePage() {
                   <strong>{item.title}</strong>
                   <p className={styles.meta}>{item.authorName}</p>
                 </div>
-                <Link to={`/detail/${item.id}`}>再次查看</Link>
+                <Link to={`/explore/${item.id}`}>再次查看</Link>
               </div>
             ))}
           </div>

@@ -52,7 +52,7 @@ export function FavoritesPage() {
               <div>
                 <strong>{item.title}</strong>
                 <p className={styles.desc}>{item.description}</p>
-                <Link to={`/detail/${item.id}`}>查看详情</Link>
+                <Link to={`/explore/${item.id}`}>查看详情</Link>
               </div>
               <Button
                 tone="ghost"

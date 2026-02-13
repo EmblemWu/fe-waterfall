@@ -6,6 +6,18 @@
   box-shadow: var(--shadow);
 }
 
+.mainLink {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.mainLink:focus-visible,
+.mainLink:hover {
+  outline: none;
+  background: #f8fafc;
+}
+
 .mediaWrap {
   position: relative;
   width: 100%;
@@ -63,7 +75,8 @@
   font-size: 13px;
 }
 
-.bottom {
+.actionBar {
+  padding: 0 12px 12px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -116,12 +129,4 @@
   margin: 8px 0 0;
   color: var(--danger);
   font-size: 12px;
-}
-
-.link {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--accent-strong);
-  font-size: 14px;
 }

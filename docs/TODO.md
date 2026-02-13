@@ -1,73 +1,99 @@
-# Community Upgrade TODO
+# Community Web Upgrade Plan
 
 ## P0 (Must)
 
-### P0-1 Home Feed Tabs
+### P0-1 现状与规划
 
-- [x] Home page supports `推荐/关注` tabs
-- [x] Both tabs use masonry + virtualization
-- [x] Tab switch keeps independent scroll position
-- [x] Each tab has loading/empty/error/retry states
+- [x] 输出现状扫描报告（路由/页面/详情打开方式/推荐关注状态）
+- [x] 按 P0/P1/P2 写计划并定义验收点
+      验收：本文件包含分级清单与逐项验收口径
 
-### P0-2 Search Page
+### P0-2 首页双 Tab（推荐/关注）状态隔离
 
-- [x] Add `/search` page with keyword search
-- [x] Add tag filter
-- [x] Add debounced input (client-side)
-- [x] Persist search history in localStorage
-- [x] Search page has loading/empty/error/retry states
+- [x] 推荐/关注各自独立保存筛选条件
+- [x] 推荐/关注各自独立保存滚动位置
+- [x] 推荐/关注各自独立保存分页缓存
+- [x] 虚拟化开/关两种模式下切 tab 均能恢复状态
+      验收：推荐滚动+筛选后切关注再切回，位置与条件均保持
 
-### P0-3 Detail + Comments
+### P0-3 卡片到详情改为路由驱动弹层（Modal Route）
 
-- [x] Detail page supports image carousel
-- [x] Add paginated comments list
-- [x] Add publish comment with retry on failure
-- [x] Comment module has loading/empty/error/retry states
+- [x] 移除“查看详情按钮”，卡片整体可点击
+- [x] 从 Feed 打开详情时，采用 `backgroundLocation` 渲染 modal overlay
+- [x] 关闭方式支持：遮罩、右上角关闭、ESC
+- [x] 关闭后回到原 Feed 且滚动位置不丢失
+- [x] 直接访问详情 URL 渲染全屏详情页
+      验收：
 
-### P0-4 Interactions (Login + Optimistic)
+1. Feed 点卡片是弹层且背景仍在
+2. 新开 `/explore/:noteId` 是全屏详情
 
-- [x] Add mock login state (global)
-- [x] Like/Favorite/Follow actions require login
-- [x] Implement optimistic update for interactions
-- [x] Simulate 10% failure and rollback state
+### P0-4 详情页结构改造（左媒体轮播 / 右评论独立滚动）
 
-### P0-5 Profile Page
+- [x] 桌面端两栏：左媒体轮播、右信息与评论
+- [x] 右栏评论区独立滚动，左侧媒体稳定
+- [x] 移动端退化为单列全屏
+- [x] 图片 skeleton + 失败占位 + 可重试
+      验收：桌面弹层中右栏滚动不影响左栏；移动端布局正常
 
-- [x] Add `/profile` page
-- [x] Show my favorites
-- [x] Show browsing history (last 50)
-- [x] Show following list
-- [x] Profile module has loading/empty/error/retry states
+### P0-5 评论与互动闭环
 
-### P0-6 Stability
+- [x] 评论分页加载（加载态/空态/错态/重试）
+- [x] 发表评论（发送中/失败重试/成功插入）
+- [x] 点赞/收藏/关注：登录后可用，游客提示登录
+- [x] optimistic update + 10% 失败回滚
+      验收：强制触发失败时能回滚且有提示；评论失败可重试成功
 
-- [x] Keep global ErrorBoundary functional
-- [x] Add image load fallback placeholders where needed
-- [x] Ensure primary modules expose empty/error/retry UX
+### P0-6 稳定性与可访问性
 
-### P0-7 Quality
+- [x] 全局 ErrorBoundary 保持可用
+- [x] 弹层打开时聚焦到弹层，Tab 不逃逸到背景
+- [x] 关闭弹层后焦点回到触发卡片
+- [x] 图片/资源失败兜底保持可用
+      验收：键盘可完整操作打开/关闭详情与焦点恢复
 
-- [x] Update Playwright with key path: Home scroll -> Search -> Detail -> Favorite -> Profile verify
-- [x] `pnpm lint/typecheck/test/build/e2e` all green
-- [x] CI workflow remains green
+### P0-7 质量与测试
 
-### P0-8 Docs
+- [x] Playwright 路径1：首页滚动 -> 卡片 modal -> ESC 关闭 -> 位置保留
+- [x] Playwright 路径2：直接访问 `/explore/:id` -> 全屏详情可用
+- [x] `pnpm lint/typecheck/test/build/e2e` 全绿
+- [ ] CI 全绿
+      验收：本地命令全通过 + GitHub Actions 成功
 
-- [x] Upgrade README to product-grade documentation
-- [x] Update `docs/PERF_LOG.md` with baseline + at least two optimization comparisons + reproducible steps
+### P0-8 文档与性能证据
 
-## P1 (Bonus)
+- [x] README 升级为产品级文档（定位/架构/闭环/运行部署）
+- [x] PERF_LOG 补 baseline + 2 次优化对比 + 复现步骤
+      验收：README 与 PERF_LOG 可直接用于面试讲解
 
-### P1-1 Perf Panel
+## P1 (Strongly Recommended)
 
-- [x] Add hidden performance panel entry
-- [x] Show rendered item count / overscan / cache size
-- [x] Support virtualization on/off comparison
+### P1-1 体验增强
 
-### P1-2 Experience
+- [x] 详情打开前预取关键数据
+- [x] 返回列表位置恢复策略补充 anchor 思路（至少文档说明）
+      验收：详情首次打开白屏时间可控；返回列表位置可靠
 
-- [x] Keep next-page prefetch and list position restore behavior stable
+### P1-2 性能面板增强
 
-### P1-3 Optional Worker
+- [x] 展示 Virtualization on/off、Rendered count、Overscan、Cache size
+- [x] 保留虚拟化开关用于对比
+      验收：面板能观察到切换前后渲染项变化
 
-- [x] Evaluate worker-based search/filter (deferred: documented as next step)
+### P1-3 搜索页产品化补齐
+
+- [x] 防抖、历史、标签筛选与状态兜底保持可用
+      验收：搜索页在正常/空结果/异常下均可交互
+
+## P2 (Bonus)
+
+### P2-1 可观测性
+
+- [x] 全局异常与未处理 Promise 日志结构化输出
+- [x] dev 调试开关控制额外日志
+      验收：开发环境可看到可读的错误/性能日志
+
+### P2-2 测试补强
+
+- [x] 增加至少一个滚动恢复或解析类 util 单测
+      验收：`pnpm test` 中出现新增用例并通过

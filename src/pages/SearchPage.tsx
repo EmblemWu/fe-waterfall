@@ -184,6 +184,7 @@ export function SearchPage() {
           onToggleLike={(id) => withActionError(() => toggleLike(id))}
           onToggleFollow={(authorId) => withActionError(() => toggleFollow(authorId))}
           enableVirtualization={enableVirtualization}
+          showPanel={false}
         />
       ) : null}
     </section>

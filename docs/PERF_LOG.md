@@ -1,59 +1,56 @@
-# PERF LOG - Community Feed
+# PERF LOG - Waterfall Lab Community
 
-## Baseline (Before Upgrade)
+## Baseline
 
-- Build: early waterfall demo (single feed)
-- Dataset: 12,000 mock items
-- Scenario:
-  1. 首页持续滚动 6-8 屏
-  2. 切筛选和搜索
-  3. 打开详情再返回
+- Dataset: 12,000 mock notes
+- Scene:
+  1. 首页深滚动 6-8 屏
+  2. 打开详情再返回
+  3. 持续搜索筛选
 - Observation:
-  - DOM 卡片节点在长滚动后持续增长
-  - 图片加载集中完成时，布局抖动可感知
+  - DOM 节点随滚动快速增长
+  - 长列表下滚动和切换有明显抖动
 
-## Optimization #1 - Windowed Virtualization + Overscan
+## Optimization #1 - Virtualized Masonry + Overscan
 
-- Change:
-  - 首页推荐/关注信息流统一接入虚拟化渲染
-  - overscan buffer 保证边缘不卡顿
+- Strategy: 仅渲染可视区 + overscan buffer
 - Result:
-  - 渲染节点从 `600+` 降到典型 `50-140`
-  - 长滚动时掉帧体感明显下降
+  - DOM card 节点由 `600+` 降至常见 `50-140`
+  - 深滚动掉帧感明显下降
 
-## Optimization #2 - Dynamic Measurement + Height Cache + Scroll Restore
+## Optimization #2 - Dynamic Height Cache + Scroll Restore
 
-- Change:
-  - ResizeObserver 动态测量卡片高度
-  - height cache 减少重复估算偏差
-  - 推荐/关注 tab 以及搜索页的滚动位置恢复
+- Strategy:
+  - ResizeObserver 动态测高
+  - 高度缓存减少重复估算
+  - 推荐/关注 tab + 搜索页滚动位置恢复
 - Result:
-  - 回流跳动减少
-  - 切换 tab/回到列表后位置可恢复，减少重复浏览成本
+  - 列表跳动明显减少
+  - 切 tab、关闭详情回列表时位置恢复稳定
 
-## Optimization #3 - Data/Interaction Stability
+## Optimization #3 - Modal Route + Prefetch + Optimistic Recovery
 
-- Change:
-  - 互动（点赞/收藏/关注） optimistic update + 失败回滚（10% 失败模拟）
-  - 评论发布 optimistic + 失败重试
-  - 全链路空态/错态/重试
+- Strategy:
+  - 卡片 hover 预取详情
+  - 路由驱动弹层（背景列表保留）
+  - 互动 optimistic + 10% 失败回滚
 - Result:
-  - 网络异常和互动失败场景具备可恢复路径
-  - 产品体验从“展示型”变为“可操作闭环型”
+  - 详情打开体感更快
+  - 异常场景可恢复，不破坏主流程
 
-## Quick Comparison
+## Comparison
 
-| Stage    | Key Strategy                     | Rendered Cards | UX Result      |
-| -------- | -------------------------------- | -------------- | -------------- |
-| Baseline | No tab-level product flow        | 600+           | 深滚动变慢     |
-| Opt#1    | Virtualized masonry              | 50-140         | 滚动稳定       |
-| Opt#2    | Dynamic height + cache + restore | 50-140         | 切换返回更稳   |
-| Opt#3    | Optimistic + rollback + retry    | 50-140         | 异常场景可恢复 |
+| Stage    | Strategy                          | Rendered cards | UX                   |
+| -------- | --------------------------------- | -------------- | -------------------- |
+| Baseline | 非窗口化长列表                    | 600+           | 深滚动卡顿           |
+| Opt#1    | Windowed virtualization           | 50-140         | 滚动显著更稳         |
+| Opt#2    | Dynamic cache + restore           | 50-140         | 切换/返回不丢位置    |
+| Opt#3    | Modal route + optimistic recovery | 50-140         | 详情与互动闭环更顺畅 |
 
 ## Repro Steps
 
-1. 首页登录后在“推荐”滚动 6 屏并关注作者。
-2. 切换“关注”tab，确认有内容并继续滚动。
-3. 进入搜索页，输入 `Aurora`，筛 tag，打开详情。
-4. 在详情点赞/收藏/评论；失败时点重试。
-5. 进入个人页验证“我的收藏/浏览历史/关注列表”。
+1. 首页点击“性能面板”显示调试信息。
+2. 在推荐流深滚动，切关注流，再切回推荐。
+3. 打开“开启虚拟化”开关对比渲染数量。
+4. 点击卡片打开 modal，按 ESC 关闭，观察列表位置。
+5. 进入详情执行点赞/收藏/关注与评论发送，观察失败重试/回滚。

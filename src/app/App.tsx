@@ -1,9 +1,8 @@
-import { RouterProvider } from 'react-router-dom'
 import { useEffect } from 'react'
 
+import { AppRoutes } from './AppRoutes'
 import { ErrorBoundary } from './ErrorBoundary'
 import { AppProviders } from './providers'
-import { router } from './router'
 import { logger } from '../lib/logger'
 
 export function App() {
@@ -28,7 +27,7 @@ export function App() {
   return (
     <ErrorBoundary>
       <AppProviders>
-        <RouterProvider router={router} />
+        <AppRoutes />
       </AppProviders>
     </ErrorBoundary>
   )

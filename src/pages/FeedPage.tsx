@@ -18,12 +18,16 @@ const defaultFilters: FeedFilters = {
 type FeedTab = 'recommended' | 'following'
 
 export function FeedPage() {
-  const [filters, setFilters] = useState<FeedFilters>(defaultFilters)
   const [tab, setTab] = useState<FeedTab>('recommended')
+  const [filtersByTab, setFiltersByTab] = useState<Record<FeedTab, FeedFilters>>({
+    recommended: defaultFilters,
+    following: defaultFilters,
+  })
   const [showPerf, setShowPerf] = useState(false)
   const [enableVirtualization, setEnableVirtualization] = useState(true)
   const [actionError, setActionError] = useState('')
-  const deferredFilters = useMemo(() => filters, [filters])
+  const activeFilters = filtersByTab[tab]
+  const deferredFilters = useMemo(() => activeFilters, [activeFilters])
   const {
     favoriteSet,
     likedSet,
@@ -95,9 +99,19 @@ export function FeedPage() {
       </div>
 
       <FeedToolbar
-        filters={filters}
-        onFilterChange={setFilters}
-        onReset={() => setFilters(defaultFilters)}
+        filters={activeFilters}
+        onFilterChange={(next) =>
+          setFiltersByTab((previous) => ({
+            ...previous,
+            [tab]: next,
+          }))
+        }
+        onReset={() =>
+          setFiltersByTab((previous) => ({
+            ...previous,
+            [tab]: defaultFilters,
+          }))
+        }
         total={feed.total}
         loaded={feed.allItems.length}
       />
@@ -149,7 +163,7 @@ export function FeedPage() {
           overscan={900}
           minColumnWidth={250}
           gap={14}
-          restoreKey={`home:${tab}:${filters.query}:${filters.category}`}
+          restoreKey={`home:${tab}:${activeFilters.query}:${activeFilters.category}`}
           favoriteSet={favoriteSet}
           likedSet={likedSet}
           followingSet={followingSet}
@@ -158,6 +172,7 @@ export function FeedPage() {
           onToggleLike={(id) => withActionError(() => toggleLike(id))}
           onToggleFollow={(authorId) => withActionError(() => toggleFollow(authorId))}
           enableVirtualization={enableVirtualization}
+          showPanel={showPerf}
         />
       ) : null}
 
