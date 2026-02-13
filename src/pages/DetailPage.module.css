@@ -1,7 +1,7 @@
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.56);
+  background: rgba(0, 0, 0, 0.52);
   z-index: 40;
   display: grid;
   place-items: center;
@@ -15,7 +15,7 @@
   border-radius: 16px;
   overflow: hidden;
   border: 1px solid var(--border);
-  box-shadow: 0 24px 50px rgba(15, 23, 42, 0.26);
+  box-shadow: 0 20px 52px rgba(0, 0, 0, 0.32);
   position: relative;
 }
 
@@ -36,7 +36,7 @@
 }
 
 .mediaPanel {
-  background: #0f172a;
+  background: #111111;
   color: white;
   display: grid;
   grid-template-rows: 1fr auto;
@@ -71,15 +71,15 @@
   align-items: center;
   justify-content: space-between;
   gap: 10px;
-  padding: 12px 16px;
-  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.16);
 }
 
 .infoPanel {
   display: grid;
   grid-template-rows: auto auto auto 1fr;
-  gap: 14px;
-  padding: 16px;
+  gap: 12px;
+  padding: 14px;
   overflow: hidden;
 }
 
@@ -92,13 +92,14 @@
 
 .title {
   margin: 0;
-  font-size: 22px;
+  font-size: 20px;
+  line-height: 1.35;
 }
 
 .meta {
   margin: 6px 0 0;
   color: var(--text-muted);
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .actions {
@@ -118,7 +119,7 @@
 
 .commentInput {
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
+  border-radius: 10px;
   min-height: 86px;
   padding: 10px;
 }
@@ -130,8 +131,8 @@
 
 .commentItem {
   border: 1px solid var(--border);
-  background: white;
-  border-radius: var(--radius-sm);
+  background: #fafafa;
+  border-radius: 10px;
   padding: 10px;
 }
 

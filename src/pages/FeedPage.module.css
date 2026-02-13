@@ -1,6 +1,6 @@
 .page {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .header {
@@ -12,11 +12,14 @@
 
 .heading {
   margin: 0;
+  font-size: 26px;
+  letter-spacing: 0.2px;
 }
 
 .sub {
-  margin: 0;
+  margin: 4px 0 0;
   color: var(--text-muted);
+  font-size: 14px;
 }
 
 .actionRow {
@@ -27,21 +30,26 @@
 .tabs {
   display: inline-flex;
   gap: 8px;
+  background: #f2f2f2;
+  padding: 4px;
+  border-radius: 999px;
 }
 
 .tab,
 .activeTab {
-  border: 1px solid var(--border);
+  border: none;
   border-radius: 999px;
-  padding: 8px 14px;
+  padding: 8px 16px;
   cursor: pointer;
-  background: white;
+  font-weight: 600;
+  background: transparent;
+  color: var(--text-muted);
 }
 
 .activeTab {
-  background: var(--accent);
-  border-color: var(--accent);
-  color: white;
+  background: white;
+  color: var(--text);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.08);
 }
 
 .virtualToggle {

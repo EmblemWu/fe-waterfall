@@ -3,18 +3,18 @@
   flex-direction: column;
   gap: 6px;
   color: var(--text-muted);
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .input {
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   border: 1px solid var(--border);
   background: white;
-  padding: 8px 10px;
+  padding: 10px 14px;
   min-width: 0;
 }
 
 .input:focus-visible {
-  outline: 2px solid rgba(15, 118, 110, 0.25);
-  border-color: var(--accent);
+  outline: 2px solid rgba(255, 36, 66, 0.2);
+  border-color: #ff9bab;
 }

@@ -1,10 +1,11 @@
 .button {
   border: 1px solid transparent;
-  border-radius: var(--radius-sm);
+  border-radius: 999px;
   padding: 8px 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.18s ease;
   font-weight: 600;
+  font-size: 14px;
 }
 
 .button:disabled {
@@ -22,17 +23,17 @@
 }
 
 .ghost {
-  background: transparent;
+  background: white;
   border-color: var(--border);
   color: var(--text);
 }
 
 .ghost:hover {
-  background: #f8fafc;
+  background: #f8f8f8;
 }
 
 .danger {
-  background: #fef3f2;
-  border-color: #fecdca;
-  color: var(--danger);
+  background: #fff0f2;
+  border-color: #ffd8de;
+  color: var(--accent);
 }
