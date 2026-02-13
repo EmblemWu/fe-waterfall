@@ -11,7 +11,13 @@ interface VirtualizedMasonryProps {
   gap: number
   restoreKey: string
   favoriteSet: Set<string>
-  onToggleFavorite: (id: string) => void
+  likedSet: Set<string>
+  followingSet: Set<string>
+  likeCounts: Map<string, number>
+  onToggleFavorite: (id: string) => Promise<void>
+  onToggleLike: (id: string) => Promise<void>
+  onToggleFollow: (authorId: string) => Promise<void>
+  enableVirtualization: boolean
 }
 
 export function VirtualizedMasonry({
@@ -21,7 +27,13 @@ export function VirtualizedMasonry({
   gap,
   restoreKey,
   favoriteSet,
+  likedSet,
+  followingSet,
+  likeCounts,
   onToggleFavorite,
+  onToggleLike,
+  onToggleFollow,
+  enableVirtualization,
 }: VirtualizedMasonryProps) {
   const { containerRef, layout, visiblePositions, onMeasure, cacheSize } = useVirtualMasonry({
     items,
@@ -30,11 +42,12 @@ export function VirtualizedMasonry({
     gap,
     restoreKey,
   })
+  const renderPositions = enableVirtualization ? visiblePositions : layout.positions
 
   return (
     <section ref={containerRef} className={styles.container} aria-label="内容流">
       <div className={styles.viewport} style={{ height: layout.totalHeight }}>
-        {visiblePositions.map((position) => (
+        {renderPositions.map((position) => (
           <div
             key={position.id}
             className={styles.item}
@@ -46,19 +59,27 @@ export function VirtualizedMasonry({
             <FeedCard
               item={position.item}
               isFavorite={favoriteSet.has(position.id)}
+              isLiked={likedSet.has(position.id)}
+              isFollowing={followingSet.has(position.item.authorId)}
+              likeCount={likeCounts.get(position.id) ?? position.item.likedCount}
               onFavoriteToggle={onToggleFavorite}
+              onLikeToggle={onToggleLike}
+              onFollowToggle={onToggleFollow}
               onMeasure={onMeasure}
             />
           </div>
         ))}
       </div>
       <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>
-        虚拟渲染: 当前渲染 {visiblePositions.length} / 总计 {items.length}，高度缓存 {cacheSize}
+        {enableVirtualization ? '虚拟渲染' : '全量渲染'}: 当前渲染 {renderPositions.length} / 总计{' '}
+        {items.length}，高度缓存 {cacheSize}
       </p>
       <PerformancePanel
-        rendered={visiblePositions.length}
+        rendered={renderPositions.length}
         total={items.length}
         cacheSize={cacheSize}
+        overscan={overscan}
+        virtualizationEnabled={enableVirtualization}
       />
     </section>
   )

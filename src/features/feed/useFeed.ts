@@ -6,10 +6,20 @@ import type { FeedFilters } from '../../types/content'
 
 const PAGE_SIZE = 80
 
-export function useFeed(filters: FeedFilters) {
+interface UseFeedOptions {
+  filters: FeedFilters
+  mode: 'recommended' | 'following'
+  followingIds?: string[]
+  tag?: string
+}
+
+export function useFeed({ filters, mode, followingIds = [], tag = 'all' }: UseFeedOptions) {
   const queryClient = useQueryClient()
 
-  const queryKey = useMemo(() => ['feed', filters] as const, [filters])
+  const queryKey = useMemo(
+    () => ['feed', filters.query, filters.category, mode, followingIds.join(','), tag] as const,
+    [filters.category, filters.query, followingIds, mode, tag],
+  )
 
   const query = useInfiniteQuery({
     queryKey,
@@ -20,6 +30,9 @@ export function useFeed(filters: FeedFilters) {
         pageSize: PAGE_SIZE,
         query: filters.query,
         category: filters.category,
+        mode,
+        followingIds,
+        tag,
         signal,
       }),
     getNextPageParam: (lastPage) => lastPage.nextPage,
@@ -47,10 +60,22 @@ export function useFeed(filters: FeedFilters) {
           pageSize: PAGE_SIZE,
           query: filters.query,
           category: filters.category,
+          mode,
+          followingIds,
+          tag,
           signal,
         }),
     })
-  }, [filters.category, filters.query, query.data?.pages, queryClient, queryKey])
+  }, [
+    filters.category,
+    filters.query,
+    followingIds,
+    mode,
+    query.data?.pages,
+    queryClient,
+    queryKey,
+    tag,
+  ])
 
   return {
     ...query,

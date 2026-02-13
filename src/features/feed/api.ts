@@ -8,11 +8,14 @@ interface FeedParams {
   pageSize: number
   query: string
   category: string
+  mode: 'recommended' | 'following'
+  followingIds?: string[]
+  tag?: string
   signal?: AbortSignal
 }
 
 export async function fetchFeedPage(params: FeedParams): Promise<FeedPageResponse> {
-  const { page, pageSize, query, category, signal } = params
+  const { page, pageSize, query, category, mode, followingIds = [], tag = 'all', signal } = params
 
   return requestWithRetry(
     async (innerSignal) =>
@@ -24,7 +27,9 @@ export async function fetchFeedPage(params: FeedParams): Promise<FeedPageRespons
             item.title.toLowerCase().includes(keyword) ||
             item.tags.some((tag) => tag.includes(keyword))
           const matchedCategory = category === 'all' || item.category === category
-          return matchedQuery && matchedCategory
+          const matchedFollow = mode === 'recommended' || followingIds.includes(item.authorId)
+          const matchedTag = tag === 'all' || item.tags.includes(tag)
+          return matchedQuery && matchedCategory && matchedFollow && matchedTag
         })
 
         const start = page * pageSize

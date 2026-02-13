@@ -1,69 +1,73 @@
-# TODO Roadmap (Week1 ~ Week8)
+# Community Upgrade TODO
 
-## Week1 - Skeleton & Standards
+## P0 (Must)
 
-- [x] Initialize Vite + React + TypeScript strict project with pnpm scripts (`dev/lint/typecheck/test/build`)
-- [x] Setup ESLint + Prettier + Husky + lint-staged + commitlint
-- [x] Setup GitHub Actions CI (lint/typecheck/test/build)
-- [x] Create core directory structure (`app/pages/features/ui/lib/types`)
-- [x] Implement base UI components (`Button/Input/Card/Skeleton/EmptyState`)
-- [x] Initialize README + roadmap docs
+### P0-1 Home Feed Tabs
 
-## Week2 - Feed MVP (No Virtualization)
+- [x] Home page supports `推荐/关注` tabs
+- [x] Both tabs use masonry + virtualization
+- [x] Tab switch keeps independent scroll position
+- [x] Each tab has loading/empty/error/retry states
 
-- [x] Build feed page with mock dataset 12,000 items
-- [x] Implement infinite loading and pagination
-- [x] Implement search + category filter
-- [x] Implement favorite/unfavorite with localStorage persistence
-- [x] Add image lazy loading + skeleton placeholders
-- [x] Add loading / empty / error states
-- [x] Add baseline entries into `docs/PERF_LOG.md`
+### P0-2 Search Page
 
-## Week3 - Virtualization 1.0
+- [x] Add `/search` page with keyword search
+- [x] Add tag filter
+- [x] Add debounced input (client-side)
+- [x] Persist search history in localStorage
+- [x] Search page has loading/empty/error/retry states
 
-- [x] Implement windowed rendering with overscan
-- [x] Ensure smooth scrolling and avoid flickering
-- [x] Add perf comparison in `docs/PERF_LOG.md` (before vs after)
+### P0-3 Detail + Comments
 
-## Week4 - Virtualization 2.0 (Dynamic Height)
+- [x] Detail page supports image carousel
+- [x] Add paginated comments list
+- [x] Add publish comment with retry on failure
+- [x] Comment module has loading/empty/error/retry states
 
-- [x] Integrate ResizeObserver for dynamic card measurement
-- [x] Implement height cache and relayout strategy
-- [x] Add scroll position restore (sessionStorage)
-- [x] Log strategy and trade-offs in `docs/PERF_LOG.md`
+### P0-4 Interactions (Login + Optimistic)
 
-## Week5 - Data & Interaction Enhancements
+- [x] Add mock login state (global)
+- [x] Like/Favorite/Follow actions require login
+- [x] Implement optimistic update for interactions
+- [x] Simulate 10% failure and rollback state
 
-- [x] Build request layer with cancellation + retry/backoff
-- [x] Use TanStack Query for cache and async orchestration
-- [x] Add prefetch for next page
-- [x] Add lightweight performance debug panel
+### P0-5 Profile Page
 
-## Week6 - Accessibility & Stability
+- [x] Add `/profile` page
+- [x] Show my favorites
+- [x] Show browsing history (last 50)
+- [x] Show following list
+- [x] Profile module has loading/empty/error/retry states
 
-- [x] Keyboard accessibility for search/list/detail (Esc to close detail)
-- [x] Add global ErrorBoundary + unhandled error capture
-- [x] Add unit tests for core utility logic
-- [x] Add stability notes in `docs/PERF_LOG.md`
+### P0-6 Stability
 
-## Week7 - E2E & Release Readiness
+- [x] Keep global ErrorBoundary functional
+- [x] Add image load fallback placeholders where needed
+- [x] Ensure primary modules expose empty/error/retry UX
 
-- [x] Add Playwright key path e2e
-- [x] Define fixed dataset + reproducible perf steps
-- [x] Expand README with architecture/perf/known limitations
+### P0-7 Quality
 
-## Week8 - Polish & Deployment
+- [x] Update Playwright with key path: Home scroll -> Search -> Detail -> Favorite -> Profile verify
+- [x] `pnpm lint/typecheck/test/build/e2e` all green
+- [x] CI workflow remains green
 
-- [x] Add GitHub Pages deployment workflow
-- [x] Final code/doc cleanup
-- [x] Complete all roadmap checkboxes and final project summary
+### P0-8 Docs
 
-## Resume Upgrade Sprint (Post Week8)
+- [x] Upgrade README to product-grade documentation
+- [x] Update `docs/PERF_LOG.md` with baseline + at least two optimization comparisons + reproducible steps
 
-- [x] Add route-level `errorElement` and 404 page for better routing UX
-- [x] Add favorites management action (clear current page favorites)
-- [x] Add second e2e path for favorites management flow
-- [x] Add detail image load failure fallback UI
-- [x] Expand CI to include e2e validation job
-- [x] Strengthen README (user paths, trade-offs, maintenance notes)
-- [x] Refine `docs/PERF_LOG.md` with optimization comparison table
+## P1 (Bonus)
+
+### P1-1 Perf Panel
+
+- [x] Add hidden performance panel entry
+- [x] Show rendered item count / overscan / cache size
+- [x] Support virtualization on/off comparison
+
+### P1-2 Experience
+
+- [x] Keep next-page prefetch and list position restore behavior stable
+
+### P1-3 Optional Worker
+
+- [x] Evaluate worker-based search/filter (deferred: documented as next step)

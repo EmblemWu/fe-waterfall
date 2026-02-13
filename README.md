@@ -1,25 +1,55 @@
-# Fe-Waterfall
+# Fe-Waterfall Community Web
 
-高交互内容流产品（瀑布流）+ 窗口化虚拟渲染项目，目标是展示“真实可部署 + 可验证性能收益”的前端交付能力。
+基于现有瀑布流项目迭代出的“内容社区 Web”版本，目标是可运行、可验证、可部署的产品闭环，而不是 UI demo。
 
-## 项目定位
+## 1. 产品定位
 
-- 面向普通用户的内容流/素材浏览产品。
-- 支持搜索、筛选、收藏、详情查看。
-- 核心卖点：在 `12,000` 条 mock 数据场景下保持滚动流畅和可维护工程质量。
+- 形态：类小红书的信息流社区
+- 核心体验：推荐/关注双 feed + 搜索发现 + 详情互动 + 个人沉淀
+- 重点能力：大数据瀑布流虚拟化、互动 optimistic 回滚、评论可恢复
 
-## Demo
+## 2. 功能闭环
 
-- 线上地址: `https://emblemwu.github.io/fe-waterfall/`
+### 首页 `/`
 
-## 用户路径（可跑通）
+- 推荐 / 关注两个 feed tab
+- 两个 tab 都是瀑布流 + 虚拟化
+- tab 切换保留独立滚动位置
+- 支持点赞/收藏/关注（登录后可用）
 
-- 路径 A（内容消费）:
-  - Feed 浏览 -> 搜索/筛选 -> 打开详情 -> 返回继续滚动
-- 路径 B（收藏管理）:
-  - Feed 收藏 -> Favorites 管理（单条取消/批量清空）-> 回到 Feed
+### 搜索页 `/search`
 
-## Tech Stack
+- 关键词搜索
+- 标签筛选
+- 输入防抖
+- 搜索历史 localStorage
+
+### 详情页 `/detail/:id`
+
+- 图文轮播
+- 评论列表分页加载
+- 发表评论（optimistic + 失败重试）
+
+### 个人页 `/profile`
+
+- 我的收藏
+- 浏览历史（最近 50 条）
+- 关注列表
+
+### 稳定性
+
+- Global ErrorBoundary
+- 路由级 errorElement + 404
+- 图片加载失败占位
+- 各模块均有加载态/空态/错误态/重试
+
+## 3. 互动机制
+
+- 登录后可用：点赞/收藏/关注
+- optimistic update：先更新 UI，再请求
+- 模拟 10% 失败：失败后自动回滚并提示
+
+## 4. 技术栈
 
 - React 19 + TypeScript (strict)
 - Vite + pnpm
@@ -28,77 +58,30 @@
 - Vitest + Playwright
 - GitHub Actions CI + GitHub Pages
 
-## 功能清单
-
-- Feed（主页面）:
-  - 分页 + 无限滚动
-  - 搜索 + 分类筛选
-  - 收藏/取消收藏（localStorage 持久化）
-  - 图片懒加载 + 骨架屏 + 资源失败兜底
-  - 加载态 / 空态 / 错误态 / 重试
-- 虚拟化（核心）:
-  - Windowed Rendering + overscan
-  - Masonry 布局
-  - 动态高度测量（ResizeObserver）
-  - 高度缓存 + 滚动位置恢复
-- Detail:
-  - 详情查看
-  - Esc 关闭返回
-  - 图片失败 fallback
-- Favorites:
-  - 收藏列表展示
-  - 取消收藏
-  - 批量清空当前页收藏
-- 路由异常处理:
-  - 全局 ErrorBoundary
-  - 路由级 `errorElement`
-  - 404 页面
-
-## 架构说明
+## 5. 工程结构
 
 ```text
 src/
-  app/            # router/layout/providers/error boundary
-  pages/          # Feed / Detail / Favorites / NotFound / RouteError
+  app/             # 路由、layout、providers、全局异常
+  pages/           # Feed/Search/Detail/Profile/404
   features/
-    feed/         # api、masonry布局、虚拟化、工具栏、卡片
-    detail/       # 详情页数据 hook
-    favorites/    # 收藏状态与 context
-  ui/             # Button/Input/Card/Skeleton/EmptyState
-  lib/            # mock/request/perf/storage/logger
-  types/          # 业务类型定义
+    auth/          # 登录态
+    feed/          # 信息流、虚拟化、瀑布流
+    detail/        # 评论与详情数据
+    social/        # 点赞/收藏/关注与历史
+  ui/              # 轻量组件
+  lib/             # request/mock/storage/perf
+  types/           # 类型定义
 ```
 
-## 性能结果（证据）
+## 6. 性能结果
 
-见 `docs/PERF_LOG.md`，包含：
+详见 `docs/PERF_LOG.md`：包含 baseline + 至少 2 次优化对比 + 复现步骤。
 
-- baseline（无虚拟化）
-- 至少 2 次优化对比（虚拟化、动态高度缓存、稳定性优化）
-- 固定数据集和复现步骤
-
-## 关键取舍
-
-- 选择 TanStack Query：减少自建缓存/并发管理复杂度。
-- 选择 CSS Modules：降低样式冲突成本，兼顾维护效率。
-- 虚拟化策略优先稳定性：先保证窗口渲染和滚动恢复，再做更激进的增量布局优化。
-
-## 已知限制
-
-- 图片源依赖外部服务时，网络波动仍会影响首屏观感（已加 fallback）。
-- 当前筛选仍在主线程，后续可迁移至 Web Worker。
-- Masonry 为全量重算，后续可升级为增量布局计算。
-
-## 本地运行
+## 7. 质量与验证
 
 ```bash
 pnpm install
-pnpm dev
-```
-
-## 验收命令
-
-```bash
 pnpm lint
 pnpm typecheck
 pnpm test
@@ -106,8 +89,17 @@ pnpm build
 pnpm e2e
 ```
 
-## CI / 部署
+关键 e2e 路径：
 
-- CI: `.github/workflows/ci.yml`（lint/typecheck/test/build/e2e）
+- 首页滚动 -> 搜索 -> 详情 -> 收藏 -> 个人页验证
+
+## 8. 部署
+
+- Demo: `https://emblemwu.github.io/fe-waterfall/`
+- CI: `.github/workflows/ci.yml`
 - Deploy: `.github/workflows/deploy-pages.yml`
-- Pages: `Settings -> Pages -> Source: GitHub Actions`
+
+## 9. 已知限制
+
+- 搜索/筛选仍在主线程执行，Worker 版暂未落地（已列为后续项）。
+- 瀑布流布局仍是全量重排策略，后续可做增量布局优化。

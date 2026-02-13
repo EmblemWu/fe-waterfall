@@ -8,12 +8,28 @@ import { Skeleton } from '../../ui/Skeleton'
 interface FeedCardProps {
   item: ContentItem
   isFavorite: boolean
-  onFavoriteToggle: (id: string) => void
+  isLiked: boolean
+  isFollowing: boolean
+  likeCount: number
+  onFavoriteToggle: (id: string) => Promise<void>
+  onLikeToggle: (id: string) => Promise<void>
+  onFollowToggle: (authorId: string) => Promise<void>
   onMeasure: (id: string, height: number) => void
 }
 
-export function FeedCard({ item, isFavorite, onFavoriteToggle, onMeasure }: FeedCardProps) {
+export function FeedCard({
+  item,
+  isFavorite,
+  isLiked,
+  isFollowing,
+  likeCount,
+  onFavoriteToggle,
+  onLikeToggle,
+  onFollowToggle,
+  onMeasure,
+}: FeedCardProps) {
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
+  const [actionError, setActionError] = useState<string>('')
   const rootRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
@@ -51,19 +67,43 @@ export function FeedCard({ item, isFavorite, onFavoriteToggle, onMeasure }: Feed
       </div>
       <div className={styles.meta}>
         <h3 className={styles.title}>{item.title}</h3>
+        <p className={styles.author}>@{item.authorName}</p>
         <p className={styles.desc}>{item.description}</p>
         <div className={styles.bottom}>
           <span className={styles.tag}>{item.category}</span>
-          <button
-            type="button"
-            className={styles.favorite}
-            onClick={() => onFavoriteToggle(item.id)}
-            aria-pressed={isFavorite}
-            data-testid="favorite-toggle"
-          >
-            {isFavorite ? '已收藏' : '收藏'}
-          </button>
+          <div className={styles.actions}>
+            <button
+              type="button"
+              className={styles.favorite}
+              onClick={() =>
+                onFavoriteToggle(item.id).catch((error: Error) => setActionError(error.message))
+              }
+              aria-pressed={isFavorite}
+              data-testid="favorite-toggle"
+            >
+              {isFavorite ? '已收藏' : '收藏'}
+            </button>
+            <button
+              type="button"
+              className={styles.like}
+              onClick={() =>
+                onLikeToggle(item.id).catch((error: Error) => setActionError(error.message))
+              }
+            >
+              {isLiked ? '已赞' : '点赞'} {likeCount}
+            </button>
+            <button
+              type="button"
+              className={styles.follow}
+              onClick={() =>
+                onFollowToggle(item.authorId).catch((error: Error) => setActionError(error.message))
+              }
+            >
+              {isFollowing ? '已关注' : '关注'}
+            </button>
+          </div>
         </div>
+        {actionError ? <p className={styles.errorHint}>操作失败：{actionError}</p> : null}
         <Link className={styles.link} to={`/detail/${item.id}`}>
           查看详情
         </Link>

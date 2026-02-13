@@ -3,6 +3,13 @@
   gap: 14px;
 }
 
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
 .heading {
   margin: 0;
 }
@@ -15,4 +22,32 @@
 .actionRow {
   display: flex;
   justify-content: center;
+}
+
+.tabs {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.tab,
+.activeTab {
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 8px 14px;
+  cursor: pointer;
+  background: white;
+}
+
+.activeTab {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: white;
+}
+
+.virtualToggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-muted);
+  font-size: 14px;
 }

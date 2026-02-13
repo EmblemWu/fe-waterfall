@@ -1,7 +1,8 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ReactNode } from 'react'
 
-import { FavoritesProvider } from '../features/favorites/FavoritesContext'
+import { AuthProvider } from '../features/auth/AuthContext'
+import { SocialProvider } from '../features/social/SocialContext'
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -17,7 +18,9 @@ const queryClient = new QueryClient({
 export function AppProviders({ children }: { children: ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
-      <FavoritesProvider>{children}</FavoritesProvider>
+      <AuthProvider>
+        <SocialProvider>{children}</SocialProvider>
+      </AuthProvider>
     </QueryClientProvider>
   )
 }

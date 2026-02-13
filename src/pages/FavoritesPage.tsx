@@ -1,14 +1,16 @@
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 import styles from './FavoritesPage.module.css'
-import { useFavoritesContext } from '../features/favorites/FavoritesContext'
+import { useSocialContext } from '../features/social/SocialContext'
 import { CONTENT_DATASET } from '../lib/mockData'
 import { Button } from '../ui/Button'
 import { Card } from '../ui/Card'
 import { EmptyState } from '../ui/EmptyState'
 
 export function FavoritesPage() {
-  const { favoriteIds, favoriteSet, toggleFavorite, removeManyFavorites } = useFavoritesContext()
+  const { favoriteIds, favoriteSet, toggleFavorite, removeManyFavorites } = useSocialContext()
+  const [actionError, setActionError] = useState('')
   const favorites = CONTENT_DATASET.filter((item) => favoriteSet.has(item.id)).slice(0, 200)
   const recentFavoriteCount = favoriteIds.length
 
@@ -24,6 +26,12 @@ export function FavoritesPage() {
 
   return (
     <section className={styles.page}>
+      {actionError ? (
+        <EmptyState
+          title="操作失败"
+          description={actionError === 'LOGIN_REQUIRED' ? '请先登录。' : '请重试。'}
+        />
+      ) : null}
       <div className={styles.header}>
         <h1 data-testid="favorites-title">我的收藏 ({favorites.length})</h1>
         <Button
@@ -46,7 +54,12 @@ export function FavoritesPage() {
                 <p className={styles.desc}>{item.description}</p>
                 <Link to={`/detail/${item.id}`}>查看详情</Link>
               </div>
-              <Button tone="ghost" onClick={() => toggleFavorite(item.id)}>
+              <Button
+                tone="ghost"
+                onClick={() =>
+                  toggleFavorite(item.id).catch((error: Error) => setActionError(error.message))
+                }
+              >
                 取消收藏
               </Button>
             </div>

@@ -5,7 +5,9 @@ import { DetailPage } from '../pages/DetailPage'
 import { FavoritesPage } from '../pages/FavoritesPage'
 import { FeedPage } from '../pages/FeedPage'
 import { NotFoundPage } from '../pages/NotFoundPage'
+import { ProfilePage } from '../pages/ProfilePage'
 import { RouteErrorPage } from '../pages/RouteErrorPage'
+import { SearchPage } from '../pages/SearchPage'
 
 export const router = createBrowserRouter(
   [
@@ -15,6 +17,8 @@ export const router = createBrowserRouter(
       errorElement: <RouteErrorPage />,
       children: [
         { index: true, element: <FeedPage /> },
+        { path: 'search', element: <SearchPage /> },
+        { path: 'profile', element: <ProfilePage /> },
         { path: 'favorites', element: <FavoritesPage /> },
         { path: 'detail/:id', element: <DetailPage /> },
         { path: '*', element: <NotFoundPage /> },

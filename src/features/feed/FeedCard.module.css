@@ -57,6 +57,12 @@
   font-size: 14px;
 }
 
+.author {
+  margin: 6px 0;
+  color: var(--accent-strong);
+  font-size: 13px;
+}
+
 .bottom {
   display: flex;
   align-items: center;
@@ -79,6 +85,37 @@
   border-radius: 999px;
   padding: 6px 10px;
   cursor: pointer;
+}
+
+.actions {
+  display: inline-flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.like,
+.follow {
+  border: none;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.like {
+  background: #eff6ff;
+  color: #1d4ed8;
+}
+
+.follow {
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.errorHint {
+  margin: 8px 0 0;
+  color: var(--danger);
+  font-size: 12px;
 }
 
 .link {

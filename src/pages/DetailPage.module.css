@@ -30,3 +30,39 @@
   justify-content: space-between;
   gap: 12px;
 }
+
+.carouselAction {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.commentBox {
+  display: grid;
+  gap: 8px;
+}
+
+.commentInput {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  min-height: 80px;
+  padding: 10px;
+}
+
+.commentList {
+  display: grid;
+  gap: 8px;
+}
+
+.commentItem {
+  border: 1px solid var(--border);
+  background: white;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+}
+
+.commentMeta {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}

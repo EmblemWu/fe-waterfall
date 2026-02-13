@@ -1,13 +1,18 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
 import styles from './AppLayout.module.css'
+import { useAuthContext } from '../features/auth/AuthContext'
+import { Button } from '../ui/Button'
 
 const navItems = [
-  { to: '/', label: 'Feed' },
-  { to: '/favorites', label: 'Favorites' },
+  { to: '/', label: '首页' },
+  { to: '/search', label: '搜索' },
+  { to: '/profile', label: '个人页' },
 ]
 
 export function AppLayout() {
+  const { isLoggedIn, login, logout } = useAuthContext()
+
   return (
     <div className={styles.shell}>
       <header className={styles.header}>
@@ -20,6 +25,13 @@ export function AppLayout() {
               </NavLink>
             ))}
           </nav>
+          <Button
+            tone={isLoggedIn ? 'ghost' : 'primary'}
+            onClick={isLoggedIn ? logout : login}
+            data-testid="auth-toggle"
+          >
+            {isLoggedIn ? '退出登录' : '登录'}
+          </Button>
         </div>
       </header>
       <main className={styles.main}>
