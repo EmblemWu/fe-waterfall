@@ -211,7 +211,7 @@ export function DetailPage({ mode }: DetailPageProps) {
 
       <div className="grid h-full grid-cols-[1.12fr_0.88fr] max-[920px]:grid-cols-1">
         <section className="flex min-h-0 flex-col border-r border-[var(--border)] bg-[#f8f8f8] p-4 max-[920px]:border-r-0 max-[920px]:border-b">
-          <div className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden rounded-xl bg-[#efefef]">
+          <div className="relative grid min-h-0 flex-1 place-items-center overflow-hidden rounded-xl bg-[#efefef]">
             {imageFailed ? (
               <div className="grid h-full min-h-[320px] w-full place-items-center bg-[#f4f4f5] text-center text-sm text-[var(--text-muted)]">
                 <div>
@@ -229,7 +229,7 @@ export function DetailPage({ mode }: DetailPageProps) {
               </div>
             ) : (
               <img
-                className="block h-full max-h-full w-full max-w-full object-contain"
+                className="block max-h-full max-w-full object-contain object-center"
                 src={`${currentImage}?v=${imageRetryNonce}`}
                 alt={item.title}
                 onError={() => setFailedImageKey(currentImageKey)}
