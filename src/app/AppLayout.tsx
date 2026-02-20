@@ -1,6 +1,5 @@
 import { NavLink, Outlet } from 'react-router-dom'
 
-import styles from './AppLayout.module.css'
 import { useAuthContext } from '../features/auth/AuthContext'
 import { Button } from '../ui/Button'
 
@@ -14,14 +13,24 @@ export function AppLayout() {
   const { isLoggedIn, login, logout } = useAuthContext()
 
   return (
-    <div className={styles.shell}>
-      <header className={styles.header}>
-        <div className={`${styles.inner} ${styles.headerRow}`}>
-          <strong className={styles.brand}>Waterfall Lab</strong>
-          <nav className={styles.nav} aria-label="Main Navigation">
+    <div className="min-h-screen">
+      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-white/95 backdrop-blur-sm">
+        <div className="mx-auto flex max-w-[1220px] items-center gap-2 px-4 py-2.5">
+          <strong className="mr-2 text-lg font-extrabold tracking-[0.2px]">Waterfall Lab</strong>
+          <nav className="flex flex-1 items-center gap-2" aria-label="Main Navigation">
             {navItems.map((item) => (
               <NavLink key={item.to} to={item.to} end={item.to === '/'}>
-                {({ isActive }) => <span data-active={isActive}>{item.label}</span>}
+                {({ isActive }) => (
+                  <span
+                    className={
+                      isActive
+                        ? 'rounded-full bg-[#ffe8ec] px-3 py-2 text-sm font-semibold text-[var(--accent)]'
+                        : 'rounded-full px-3 py-2 text-sm font-semibold text-[var(--text-muted)]'
+                    }
+                  >
+                    {item.label}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -34,7 +43,7 @@ export function AppLayout() {
           </Button>
         </div>
       </header>
-      <main className={styles.main}>
+      <main className="mx-auto max-w-[1220px] px-4 pb-12 pt-4">
         <Outlet />
       </main>
     </div>

@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import styles from './FeedPage.module.css'
 import { FeedToolbar } from '../features/feed/FeedToolbar'
 import { useFeed } from '../features/feed/useFeed'
 import { VirtualizedMasonry } from '../features/feed/VirtualizedMasonry'
@@ -70,28 +69,38 @@ export function FeedPage() {
   }
 
   return (
-    <div className={styles.page}>
-      <div className={styles.header}>
+    <div className="grid gap-3">
+      <div className="flex items-center justify-between gap-3">
         <div>
-          <h1 className={styles.heading}>内容社区首页</h1>
-          <p className={styles.sub}>推荐 / 关注双信息流，瀑布流虚拟化渲染。</p>
+          <h1 className="m-0 text-[26px] tracking-[0.2px]">内容社区首页</h1>
+          <p className="mt-1 text-sm text-[var(--text-muted)]">
+            推荐 / 关注双信息流，瀑布流虚拟化渲染。
+          </p>
         </div>
         <Button tone="ghost" onClick={() => setShowPerf((v) => !v)}>
           {showPerf ? '隐藏性能面板' : '性能面板'}
         </Button>
       </div>
 
-      <div className={styles.tabs}>
+      <div className="inline-flex gap-2 rounded-full bg-[#f2f2f2] p-1">
         <button
           type="button"
-          className={tab === 'recommended' ? styles.activeTab : styles.tab}
+          className={
+            tab === 'recommended'
+              ? 'rounded-full bg-white px-4 py-2 font-semibold text-[var(--text)] shadow-[0_1px_5px_rgba(0,0,0,0.08)]'
+              : 'rounded-full bg-transparent px-4 py-2 font-semibold text-[var(--text-muted)]'
+          }
           onClick={() => setTab('recommended')}
         >
           推荐
         </button>
         <button
           type="button"
-          className={tab === 'following' ? styles.activeTab : styles.tab}
+          className={
+            tab === 'following'
+              ? 'rounded-full bg-white px-4 py-2 font-semibold text-[var(--text)] shadow-[0_1px_5px_rgba(0,0,0,0.08)]'
+              : 'rounded-full bg-transparent px-4 py-2 font-semibold text-[var(--text-muted)]'
+          }
           onClick={() => setTab('following')}
         >
           关注
@@ -117,7 +126,7 @@ export function FeedPage() {
       />
 
       {showPerf ? (
-        <label className={styles.virtualToggle}>
+        <label className="inline-flex items-center gap-2 text-sm text-[var(--text-muted)]">
           <input
             type="checkbox"
             checked={enableVirtualization}
@@ -177,7 +186,7 @@ export function FeedPage() {
       ) : null}
 
       {feed.hasNextPage ? (
-        <div className={styles.actionRow}>
+        <div className="flex justify-center">
           <Button onClick={() => fetchNextPage()} disabled={isFetchingNextPage}>
             {isFetchingNextPage ? '加载中...' : '加载更多'}
           </Button>
