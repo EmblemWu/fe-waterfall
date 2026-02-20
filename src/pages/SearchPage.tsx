@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useFeed } from '../features/feed/useFeed'
 import { VirtualizedMasonry } from '../features/feed/VirtualizedMasonry'
 import { useSocialContext } from '../features/social/SocialContext'
+import { CONTENT_DATASET } from '../lib/mockData'
 import { loadSearchHistory, saveSearchHistory } from '../lib/storage'
 import { useDebouncedValue } from '../lib/useDebouncedValue'
 import type { FeedFilters } from '../types/content'
@@ -28,9 +29,21 @@ const tagOptions = [
   'urban',
 ]
 
+const hotKeywords = Array.from(
+  new Set(
+    CONTENT_DATASET.flatMap((item) => [
+      item.tags[0],
+      item.tags[1],
+      item.category,
+      item.authorName,
+    ]).filter((value): value is string => Boolean(value)),
+  ),
+).slice(0, 10)
+
 export function SearchPage() {
   const [filters, setFilters] = useState(defaultFilters)
   const [tag, setTag] = useState('all')
+  const [sort, setSort] = useState<'relevant' | 'latest'>('relevant')
   const [history, setHistory] = useState<string[]>(() => loadSearchHistory())
   const [enableVirtualization] = useState(true)
   const [actionError, setActionError] = useState('')
@@ -57,6 +70,12 @@ export function SearchPage() {
     followingIds: Array.from(followingSet),
     tag,
   })
+  const sortedItems = useMemo(() => {
+    if (sort === 'relevant') {
+      return feed.allItems
+    }
+    return [...feed.allItems].sort((a, b) => Number(b.id.slice(5)) - Number(a.id.slice(5)))
+  }, [feed.allItems, sort])
 
   const pushHistory = (value: string) => {
     const keyword = value.trim()
@@ -119,6 +138,31 @@ export function SearchPage() {
         </label>
       </div>
 
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          className={
+            sort === 'relevant'
+              ? 'rounded-full bg-[#ffe8ec] px-4 py-1.5 text-sm font-semibold text-[var(--accent)]'
+              : 'rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)]'
+          }
+          onClick={() => setSort('relevant')}
+        >
+          综合
+        </button>
+        <button
+          type="button"
+          className={
+            sort === 'latest'
+              ? 'rounded-full bg-[#ffe8ec] px-4 py-1.5 text-sm font-semibold text-[var(--accent)]'
+              : 'rounded-full bg-white px-4 py-1.5 text-sm font-semibold text-[var(--text-muted)] hover:text-[var(--text)]'
+          }
+          onClick={() => setSort('latest')}
+        >
+          最新
+        </button>
+      </div>
+
       {history.length > 0 ? (
         <div>
           <p className="mb-2 mt-0 text-sm text-[var(--text-muted)]">搜索历史</p>
@@ -146,6 +190,22 @@ export function SearchPage() {
         </div>
       ) : null}
 
+      <div className="rounded-2xl border border-[var(--border)] bg-white p-3">
+        <p className="mb-2 mt-0 text-sm font-semibold text-[var(--text)]">热门搜索</p>
+        <div className="flex flex-wrap gap-2">
+          {hotKeywords.map((keyword) => (
+            <button
+              key={keyword}
+              type="button"
+              className="rounded-full bg-[#f4f6fa] px-3 py-1.5 text-xs text-[#6b7280] hover:bg-[#eceff4]"
+              onClick={() => setFilters((prev) => ({ ...prev, query: keyword }))}
+            >
+              {keyword}
+            </button>
+          ))}
+        </div>
+      </div>
+
       {actionError ? (
         <EmptyState
           title="互动失败"
@@ -165,17 +225,17 @@ export function SearchPage() {
           action={<Button onClick={() => feed.refetch()}>重试</Button>}
         />
       ) : null}
-      {!feed.isPending && !feed.isError && feed.allItems.length === 0 ? (
+      {!feed.isPending && !feed.isError && sortedItems.length === 0 ? (
         <EmptyState title="无搜索结果" description="换个关键词或标签试试。" />
       ) : null}
 
-      {feed.allItems.length > 0 ? (
+      {sortedItems.length > 0 ? (
         <VirtualizedMasonry
-          items={feed.allItems}
+          items={sortedItems}
           overscan={700}
           minColumnWidth={250}
           gap={14}
-          restoreKey={`search:${debouncedFilters.query}:${tag}`}
+          restoreKey={`search:${debouncedFilters.query}:${tag}:${sort}`}
           favoriteSet={favoriteSet}
           likedSet={likedSet}
           followingSet={followingSet}

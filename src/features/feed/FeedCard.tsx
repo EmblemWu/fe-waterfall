@@ -6,6 +6,54 @@ import { fetchDetail } from './api'
 import type { ContentItem } from '../../types/content'
 import { Skeleton } from '../../ui/Skeleton'
 
+function ActionIcon({
+  kind,
+  active = false,
+}: {
+  kind: 'like' | 'favorite' | 'comment'
+  active?: boolean
+}) {
+  if (kind === 'comment') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
+        <path
+          d="M5 6.8A2.8 2.8 0 0 1 7.8 4h8.4A2.8 2.8 0 0 1 19 6.8v5.4a2.8 2.8 0 0 1-2.8 2.8h-6L7 18.2V15A2.8 2.8 0 0 1 5 12.2V6.8Z"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  if (kind === 'favorite') {
+    return (
+      <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
+        <path
+          d="M6.8 4h10.4A1.8 1.8 0 0 1 19 5.8V20l-7-3.4L5 20V5.8A1.8 1.8 0 0 1 6.8 4Z"
+          fill={active ? 'currentColor' : 'none'}
+          stroke="currentColor"
+          strokeWidth="1.8"
+          strokeLinejoin="round"
+        />
+      </svg>
+    )
+  }
+
+  return (
+    <svg aria-hidden="true" viewBox="0 0 24 24" className="h-3.5 w-3.5">
+      <path
+        d="M12 20.2 4.9 13.5a4.4 4.4 0 0 1 6.2-6.2L12 8.2l.9-.9a4.4 4.4 0 0 1 6.2 6.2L12 20.2Z"
+        fill={active ? 'currentColor' : 'none'}
+        stroke="currentColor"
+        strokeWidth="1.8"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 interface FeedCardProps {
   item: ContentItem
   isFavorite: boolean
@@ -35,6 +83,7 @@ export function FeedCard({
   const [actionError, setActionError] = useState<string>('')
   const rootRef = useRef<HTMLDivElement | null>(null)
   const timeoutRef = useRef<number | null>(null)
+  const commentCount = (Number(item.id.replace('item-', '')) % 150) + 12
 
   useEffect(() => {
     if (!rootRef.current) {
@@ -135,7 +184,7 @@ export function FeedCard({
         <div className="inline-flex flex-wrap justify-end gap-1.5">
           <button
             type="button"
-            className={`cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
+            className={`inline-flex items-center gap-1.5 cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
               isFavorite
                 ? 'border-[#ffd4dc] bg-[#fff1f4] text-[var(--accent)]'
                 : 'border-[var(--border)] bg-white text-[#4d5561] hover:bg-[#f9fafb]'
@@ -146,11 +195,12 @@ export function FeedCard({
             aria-pressed={isFavorite}
             data-testid="favorite-toggle"
           >
-            {isFavorite ? '已收藏' : '收藏'}
+            <ActionIcon kind="favorite" active={isFavorite} />
+            {isFavorite ? '已藏' : '收藏'}
           </button>
           <button
             type="button"
-            className={`cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
+            className={`inline-flex items-center gap-1.5 cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
               isLiked
                 ? 'border-[#ffd4dc] bg-[#fff1f4] text-[var(--accent)]'
                 : 'border-[var(--border)] bg-white text-[#374151] hover:bg-[#f9fafb]'
@@ -159,11 +209,23 @@ export function FeedCard({
               onLikeToggle(item.id).catch((error: Error) => setActionError(error.message))
             }
           >
-            {isLiked ? '已赞' : '点赞'} {likeCount}
+            <ActionIcon kind="like" active={isLiked} />
+            {likeCount}
           </button>
+          <Link
+            to={`/explore/${item.id}`}
+            state={{
+              backgroundLocation: location,
+              returnFocusId: item.id,
+            }}
+            className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[#374151] transition hover:bg-[#f9fafb]"
+          >
+            <ActionIcon kind="comment" />
+            {commentCount}
+          </Link>
           <button
             type="button"
-            className={`cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
+            className={`inline-flex items-center gap-1.5 cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
               isFollowing
                 ? 'border-[#d5ecde] bg-[#effbf3] text-[#1f7a44]'
                 : 'border-[var(--border)] bg-white text-[#111827] hover:bg-[#f9fafb]'
@@ -172,7 +234,7 @@ export function FeedCard({
               onFollowToggle(item.authorId).catch((error: Error) => setActionError(error.message))
             }
           >
-            {isFollowing ? '已关注' : '关注'}
+            {isFollowing ? '已关注' : '+关注'}
           </button>
         </div>
       </div>

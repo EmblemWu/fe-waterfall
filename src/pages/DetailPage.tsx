@@ -12,6 +12,16 @@ interface DetailPageProps {
   mode: 'modal' | 'page'
 }
 
+function formatCommentGroupLabel(iso: string) {
+  const date = new Date(iso)
+  const now = new Date()
+  const isToday = date.toDateString() === now.toDateString()
+  if (isToday) {
+    return '今天'
+  }
+  return date.toLocaleDateString()
+}
+
 function getFocusableElements(container: HTMLElement): HTMLElement[] {
   return Array.from(
     container.querySelectorAll<HTMLElement>(
@@ -40,8 +50,10 @@ export function DetailPage({ mode }: DetailPageProps) {
   const [imageRetryNonce, setImageRetryNonce] = useState(0)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [commentDraft, setCommentDraft] = useState('')
+  const [replyTarget, setReplyTarget] = useState<string | null>(null)
   const [commentError, setCommentError] = useState('')
   const modalRef = useRef<HTMLDivElement | null>(null)
+  const commentInputRef = useRef<HTMLTextAreaElement | null>(null)
 
   const close = () => {
     if (mode === 'modal') {
@@ -152,12 +164,21 @@ export function DetailPage({ mode }: DetailPageProps) {
     try {
       await comments.publishMutation.mutateAsync(payload)
       setCommentDraft('')
+      setReplyTarget(null)
     } catch {
       setCommentError('评论发送失败，请点击重试。')
     }
   }
 
   const summaryLikeCount = likeCounts.get(item.id) ?? item.likedCount
+  const groupedComments = comments.comments.reduce<Record<string, typeof comments.comments>>(
+    (acc, comment) => {
+      const key = formatCommentGroupLabel(comment.createdAt)
+      acc[key] = acc[key] ? [...acc[key], comment] : [comment]
+      return acc
+    },
+    {},
+  )
 
   const body = (
     <div
@@ -283,15 +304,27 @@ export function DetailPage({ mode }: DetailPageProps) {
 
             <h2 className="m-0 text-lg font-semibold">评论区</h2>
             <textarea
+              ref={commentInputRef}
               className="mt-2 min-h-[92px] w-full resize-y rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm outline-none focus-visible:border-[#ff9bab] focus-visible:ring-2 focus-visible:ring-[#ff244233]"
               value={commentDraft}
               onChange={(event) => setCommentDraft(event.currentTarget.value)}
-              placeholder="写下你的评论..."
+              placeholder={replyTarget ? `回复 @${replyTarget}` : '写下你的评论...'}
             />
-            <div className="mt-2">
+            <div className="mt-2 flex items-center gap-2">
               <Button onClick={onSubmitComment} disabled={comments.publishMutation.isPending}>
                 {comments.publishMutation.isPending ? '发布中...' : '发表评论'}
               </Button>
+              {replyTarget ? (
+                <Button
+                  tone="ghost"
+                  onClick={() => {
+                    setReplyTarget(null)
+                    setCommentDraft('')
+                  }}
+                >
+                  取消回复
+                </Button>
+              ) : null}
             </div>
 
             <div className="mt-3 grid gap-3">
@@ -308,18 +341,38 @@ export function DetailPage({ mode }: DetailPageProps) {
               ) : null}
 
               {comments.comments.length > 0 ? (
-                <div className="grid gap-2">
-                  {comments.comments.map((comment) => (
-                    <article
-                      key={comment.id}
-                      className="rounded-xl border border-[var(--border)] bg-white px-3 py-2"
-                    >
-                      <strong>{comment.authorName}</strong>
-                      <p className="mb-0 mt-1 text-sm">{comment.message}</p>
-                      <p className="mb-0 mt-1 text-xs text-[var(--text-muted)]">
-                        {new Date(comment.createdAt).toLocaleString()}
-                      </p>
-                    </article>
+                <div className="grid gap-3">
+                  {Object.entries(groupedComments).map(([groupLabel, groupItems]) => (
+                    <section key={groupLabel} className="grid gap-2">
+                      <div className="sticky top-0 z-10 -mx-1 rounded-md bg-[#fcfcfc]/90 px-1 py-1 text-xs font-semibold text-[var(--text-muted)] backdrop-blur">
+                        {groupLabel}
+                      </div>
+                      {groupItems.map((comment) => (
+                        <article
+                          key={comment.id}
+                          className="rounded-xl border border-[var(--border)] bg-white px-3 py-2"
+                        >
+                          <div className="flex items-center justify-between gap-2">
+                            <strong>{comment.authorName}</strong>
+                            <button
+                              type="button"
+                              className="text-xs font-semibold text-[var(--accent)]"
+                              onClick={() => {
+                                setReplyTarget(comment.authorName)
+                                setCommentDraft(`@${comment.authorName} `)
+                                commentInputRef.current?.focus()
+                              }}
+                            >
+                              回复
+                            </button>
+                          </div>
+                          <p className="mb-0 mt-1 text-sm">{comment.message}</p>
+                          <p className="mb-0 mt-1 text-xs text-[var(--text-muted)]">
+                            {new Date(comment.createdAt).toLocaleString()}
+                          </p>
+                        </article>
+                      ))}
+                    </section>
                   ))}
                 </div>
               ) : null}
