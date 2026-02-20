@@ -179,6 +179,15 @@ export function DetailPage({ mode }: DetailPageProps) {
     },
     {},
   )
+  const hasMultipleImages = imageUrls.length > 1
+
+  const goPrevImage = () => {
+    setCurrentImageIndex((index) => (index === 0 ? imageUrls.length - 1 : index - 1))
+  }
+
+  const goNextImage = () => {
+    setCurrentImageIndex((index) => (index + 1) % imageUrls.length)
+  }
 
   const body = (
     <div
@@ -226,31 +235,33 @@ export function DetailPage({ mode }: DetailPageProps) {
                 onError={() => setFailedImageKey(currentImageKey)}
               />
             )}
+            {hasMultipleImages ? (
+              <>
+                <button
+                  type="button"
+                  aria-label="上一张图片"
+                  className="absolute left-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-black/20 text-white backdrop-blur-sm transition hover:bg-black/35"
+                  onClick={goPrevImage}
+                >
+                  <span className="text-lg leading-none">‹</span>
+                </button>
+                <button
+                  type="button"
+                  aria-label="下一张图片"
+                  className="absolute right-3 top-1/2 z-10 grid h-10 w-10 -translate-y-1/2 place-items-center rounded-full bg-black/20 text-white backdrop-blur-sm transition hover:bg-black/35"
+                  onClick={goNextImage}
+                >
+                  <span className="text-lg leading-none">›</span>
+                </button>
+              </>
+            ) : null}
           </div>
-          <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[var(--text-muted)]">
-            <Button
-              tone="ghost"
-              onClick={() => {
-                setCurrentImageIndex((index) => (index === 0 ? imageUrls.length - 1 : index - 1))
-              }}
-            >
-              上一张
-            </Button>
-            <span>
-              {activeImageIndex + 1}/{imageUrls.length}
-            </span>
-            <Button
-              tone="ghost"
-              onClick={() => {
-                setCurrentImageIndex((index) => (index + 1) % imageUrls.length)
-              }}
-            >
-              下一张
-            </Button>
+          <div className="mt-3 text-center text-sm text-[var(--text-muted)]">
+            {activeImageIndex + 1}/{imageUrls.length}
           </div>
         </section>
 
-        <section className="flex h-full min-h-[620px] flex-col p-4 max-[920px]:min-h-0">
+        <section className="flex h-full min-h-0 flex-col p-4">
           <div className="mb-3 flex items-start justify-between gap-3 border-b border-[var(--border)] pb-3">
             <div>
               <h1 className="m-0 text-2xl font-bold">{item.title}</h1>
