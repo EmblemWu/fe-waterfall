@@ -193,8 +193,8 @@ export function DetailPage({ mode }: DetailPageProps) {
     <div
       className={
         mode === 'modal'
-          ? 'relative w-[min(1080px,94vw)] max-h-[92vh] overflow-hidden rounded-2xl bg-white shadow-[0_16px_50px_rgba(0,0,0,0.2)]'
-          : 'mx-auto w-full max-w-[1080px] overflow-hidden rounded-2xl border border-[var(--border)] bg-white'
+          ? 'relative h-[92vh] w-[min(1080px,94vw)] overflow-hidden rounded-2xl bg-white shadow-[0_16px_50px_rgba(0,0,0,0.2)]'
+          : 'mx-auto h-[min(92vh,900px)] w-full max-w-[1080px] overflow-hidden rounded-2xl border border-[var(--border)] bg-white max-[920px]:h-auto'
       }
       data-testid={mode === 'modal' ? 'detail-modal' : 'detail-page'}
     >
@@ -209,8 +209,8 @@ export function DetailPage({ mode }: DetailPageProps) {
         </Button>
       ) : null}
 
-      <div className="grid h-full grid-cols-[1.12fr_0.88fr] max-[920px]:grid-cols-1">
-        <section className="flex min-h-0 flex-col border-r border-[var(--border)] bg-[#f8f8f8] p-4 max-[920px]:border-r-0 max-[920px]:border-b">
+      <div className="grid h-full min-h-0 grid-cols-[1.12fr_0.88fr] max-[920px]:grid-cols-1">
+        <section className="flex h-full min-h-0 flex-col overflow-hidden border-r border-[var(--border)] bg-[#f8f8f8] p-4 max-[920px]:border-r-0 max-[920px]:border-b">
           <div className="relative grid min-h-0 flex-1 place-items-center overflow-hidden rounded-xl bg-[#efefef]">
             {imageFailed ? (
               <div className="grid h-full min-h-[320px] w-full place-items-center bg-[#f4f4f5] text-center text-sm text-[var(--text-muted)]">
@@ -261,7 +261,7 @@ export function DetailPage({ mode }: DetailPageProps) {
           </div>
         </section>
 
-        <section className="flex h-full min-h-0 flex-col p-4">
+        <section className="flex h-full min-h-0 flex-col overflow-hidden p-4">
           <div className="mb-3 flex items-start justify-between gap-3 border-b border-[var(--border)] pb-3">
             <div>
               <h1 className="m-0 text-2xl font-bold">{item.title}</h1>
