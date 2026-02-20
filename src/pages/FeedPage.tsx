@@ -69,26 +69,28 @@ export function FeedPage() {
   }
 
   return (
-    <div className="grid gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <h1 className="m-0 text-[26px] tracking-[0.2px]">内容社区首页</h1>
-          <p className="mt-1 text-sm text-[var(--text-muted)]">
-            推荐 / 关注双信息流，瀑布流虚拟化渲染。
-          </p>
+    <div className="grid gap-4">
+      <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[0_6px_24px_rgba(18,23,33,0.05)]">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h1 className="m-0 text-[28px] font-black tracking-[0.2px]">内容社区首页</h1>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              推荐 / 关注双信息流，瀑布流虚拟化渲染。
+            </p>
+          </div>
+          <Button tone="ghost" onClick={() => setShowPerf((v) => !v)}>
+            {showPerf ? '隐藏性能面板' : '性能面板'}
+          </Button>
         </div>
-        <Button tone="ghost" onClick={() => setShowPerf((v) => !v)}>
-          {showPerf ? '隐藏性能面板' : '性能面板'}
-        </Button>
       </div>
 
-      <div className="inline-flex gap-2 rounded-full bg-[#f2f2f2] p-1">
+      <div className="inline-flex w-fit gap-1 rounded-full bg-white p-1 shadow-[0_3px_10px_rgba(18,23,33,0.08)]">
         <button
           type="button"
           className={
             tab === 'recommended'
-              ? 'rounded-full bg-white px-4 py-2 font-semibold text-[var(--text)] shadow-[0_1px_5px_rgba(0,0,0,0.08)]'
-              : 'rounded-full bg-transparent px-4 py-2 font-semibold text-[var(--text-muted)]'
+              ? 'rounded-full bg-[#ffe8ec] px-5 py-2 font-semibold text-[var(--accent)]'
+              : 'rounded-full bg-transparent px-5 py-2 font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]'
           }
           onClick={() => setTab('recommended')}
         >
@@ -98,8 +100,8 @@ export function FeedPage() {
           type="button"
           className={
             tab === 'following'
-              ? 'rounded-full bg-white px-4 py-2 font-semibold text-[var(--text)] shadow-[0_1px_5px_rgba(0,0,0,0.08)]'
-              : 'rounded-full bg-transparent px-4 py-2 font-semibold text-[var(--text-muted)]'
+              ? 'rounded-full bg-[#ffe8ec] px-5 py-2 font-semibold text-[var(--accent)]'
+              : 'rounded-full bg-transparent px-5 py-2 font-semibold text-[var(--text-muted)] transition hover:text-[var(--text)]'
           }
           onClick={() => setTab('following')}
         >

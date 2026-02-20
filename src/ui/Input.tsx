@@ -8,7 +8,7 @@ export function Input({ label, id, className = '', ...props }: InputProps) {
   const input = (
     <input
       id={id}
-      className={`min-w-0 rounded-full border border-[var(--border)] bg-white px-3.5 py-2.5 text-sm outline-none focus-visible:border-[#ff9bab] focus-visible:ring-2 focus-visible:ring-[#ff244233] ${className}`.trim()}
+      className={`min-w-0 rounded-full border border-[var(--border)] bg-white px-3.5 py-2.5 text-sm outline-none transition focus-visible:border-[#ff9bab] focus-visible:ring-2 focus-visible:ring-[#ff244233] ${className}`.trim()}
       {...props}
     />
   )

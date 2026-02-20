@@ -84,9 +84,15 @@ export function SearchPage() {
   }
 
   return (
-    <section className="grid gap-3">
-      <h1 className="m-0 text-[26px] tracking-[0.2px]">搜索</h1>
-      <div className="grid grid-cols-[1fr_220px] gap-3 max-[860px]:grid-cols-1">
+    <section className="grid gap-4">
+      <div className="rounded-2xl border border-[var(--border)] bg-white p-4 shadow-[0_6px_24px_rgba(18,23,33,0.05)]">
+        <h1 className="m-0 text-[28px] font-black tracking-[0.2px]">搜索发现</h1>
+        <p className="mb-0 mt-1 text-sm text-[var(--text-muted)]">
+          用关键词和标签找内容，支持历史记录快速回搜。
+        </p>
+      </div>
+
+      <div className="grid grid-cols-[1fr_220px] gap-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-[0_4px_18px_rgba(18,23,33,0.04)] max-[860px]:grid-cols-1">
         <Input
           id="search-page-keyword"
           label="关键词"
@@ -102,7 +108,7 @@ export function SearchPage() {
           <select
             value={tag}
             onChange={(event) => setTag(event.currentTarget.value)}
-            className="rounded-full border border-[var(--border)] bg-white px-3 py-2.5 text-sm"
+            className="rounded-full border border-[var(--border)] bg-white px-3 py-2.5 text-sm outline-none transition focus-visible:border-[#ff9bab] focus-visible:ring-2 focus-visible:ring-[#ff244233]"
           >
             {tagOptions.map((option) => (
               <option key={option} value={option}>

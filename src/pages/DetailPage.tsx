@@ -36,7 +36,7 @@ export function DetailPage({ mode }: DetailPageProps) {
     toggleFollow,
     recordBrowseHistory,
   } = useSocialContext()
-  const [imageFailed, setImageFailed] = useState(false)
+  const [failedImageKey, setFailedImageKey] = useState<string | null>(null)
   const [imageRetryNonce, setImageRetryNonce] = useState(0)
   const [currentImageIndex, setCurrentImageIndex] = useState(0)
   const [commentDraft, setCommentDraft] = useState('')
@@ -125,7 +125,10 @@ export function DetailPage({ mode }: DetailPageProps) {
 
   const item = detail.data
   const imageUrls = item.imageUrls.length > 0 ? item.imageUrls : [item.imageUrl]
-  const currentImage = imageUrls[currentImageIndex] ?? item.imageUrl
+  const activeImageIndex = currentImageIndex < imageUrls.length ? currentImageIndex : 0
+  const currentImage = imageUrls[activeImageIndex] ?? item.imageUrl
+  const currentImageKey = `${noteId}:${activeImageIndex}:${imageRetryNonce}`
+  const imageFailed = failedImageKey === currentImageKey
 
   const action = async (task: () => Promise<void>) => {
     try {
@@ -186,7 +189,7 @@ export function DetailPage({ mode }: DetailPageProps) {
                   <Button
                     tone="ghost"
                     onClick={() => {
-                      setImageFailed(false)
+                      setFailedImageKey(null)
                       setImageRetryNonce((value) => value + 1)
                     }}
                   >
@@ -199,25 +202,27 @@ export function DetailPage({ mode }: DetailPageProps) {
                 className="block w-full object-cover"
                 src={`${currentImage}?v=${imageRetryNonce}`}
                 alt={item.title}
-                onError={() => setImageFailed(true)}
+                onError={() => setFailedImageKey(currentImageKey)}
               />
             )}
           </div>
           <div className="mt-3 flex items-center justify-center gap-2 text-sm text-[var(--text-muted)]">
             <Button
               tone="ghost"
-              onClick={() =>
+              onClick={() => {
                 setCurrentImageIndex((index) => (index === 0 ? imageUrls.length - 1 : index - 1))
-              }
+              }}
             >
               上一张
             </Button>
             <span>
-              {currentImageIndex + 1}/{imageUrls.length}
+              {activeImageIndex + 1}/{imageUrls.length}
             </span>
             <Button
               tone="ghost"
-              onClick={() => setCurrentImageIndex((index) => (index + 1) % imageUrls.length)}
+              onClick={() => {
+                setCurrentImageIndex((index) => (index + 1) % imageUrls.length)
+              }}
             >
               下一张
             </Button>
@@ -225,12 +230,17 @@ export function DetailPage({ mode }: DetailPageProps) {
         </section>
 
         <section className="flex h-full min-h-[620px] flex-col p-4 max-[920px]:min-h-0">
-          <div className="mb-3 flex items-start justify-between gap-3">
+          <div className="mb-3 flex items-start justify-between gap-3 border-b border-[var(--border)] pb-3">
             <div>
               <h1 className="m-0 text-2xl font-bold">{item.title}</h1>
-              <p className="mb-0 mt-1 text-sm text-[var(--text-muted)]">
-                作者：{item.authorName} · 分类：{item.category}
-              </p>
+              <div className="mt-2 flex items-center gap-2 text-sm text-[var(--text-muted)]">
+                <span className="grid h-8 w-8 place-items-center rounded-full bg-[#f3f4f7] text-xs font-semibold text-[#66707f]">
+                  {item.authorName.slice(0, 1)}
+                </span>
+                <span>{item.authorName}</span>
+                <span>·</span>
+                <span>{item.category}</span>
+              </div>
               <p className="mb-0 mt-1 text-sm text-[var(--text-muted)]">
                 标签：{item.tags.join(', ')}
               </p>
@@ -271,7 +281,7 @@ export function DetailPage({ mode }: DetailPageProps) {
               </div>
             ) : null}
 
-            <h2 className="m-0 text-lg font-semibold">评论</h2>
+            <h2 className="m-0 text-lg font-semibold">评论区</h2>
             <textarea
               className="mt-2 min-h-[92px] w-full resize-y rounded-xl border border-[var(--border)] bg-white px-3 py-2 text-sm outline-none focus-visible:border-[#ff9bab] focus-visible:ring-2 focus-visible:ring-[#ff244233]"
               value={commentDraft}

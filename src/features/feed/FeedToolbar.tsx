@@ -37,7 +37,7 @@ export function FeedToolbar({ filters, total, loaded, onFilterChange, onReset }:
   }
 
   return (
-    <section>
+    <section className="rounded-2xl border border-[var(--border)] bg-white p-3 shadow-[0_4px_18px_rgba(18,23,33,0.04)]">
       <div className="mb-3 grid grid-cols-[1fr_180px_auto] items-end gap-3 max-[860px]:grid-cols-1">
         <Input
           id="search"
@@ -53,7 +53,7 @@ export function FeedToolbar({ filters, total, loaded, onFilterChange, onReset }:
             value={filters.category}
             onChange={onCategoryChange}
             aria-label="分类筛选"
-            className="mt-1.5 w-full rounded-full border border-[var(--border)] bg-white px-3 py-2.5 text-sm"
+            className="mt-1.5 w-full rounded-full border border-[var(--border)] bg-white px-3 py-2.5 text-sm outline-none transition focus-visible:border-[#ff9bab] focus-visible:ring-2 focus-visible:ring-[#ff244233]"
           >
             {categories.map((option) => (
               <option key={option.value} value={option.value}>

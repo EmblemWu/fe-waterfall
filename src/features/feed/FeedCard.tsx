@@ -34,6 +34,7 @@ export function FeedCard({
   const [status, setStatus] = useState<'loading' | 'ready' | 'error'>('loading')
   const [actionError, setActionError] = useState<string>('')
   const rootRef = useRef<HTMLDivElement | null>(null)
+  const timeoutRef = useRef<number | null>(null)
 
   useEffect(() => {
     if (!rootRef.current) {
@@ -51,10 +52,24 @@ export function FeedCard({
     return () => observer.disconnect()
   }, [item.id, onMeasure])
 
+  useEffect(() => {
+    if (status !== 'loading') {
+      return
+    }
+    timeoutRef.current = window.setTimeout(() => {
+      setStatus('error')
+    }, 9000)
+    return () => {
+      if (timeoutRef.current != null) {
+        window.clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [status])
+
   return (
     <article
       ref={rootRef}
-      className="overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-transform duration-200 hover:-translate-y-px"
+      className="group overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface)] shadow-[0_6px_20px_rgba(18,23,33,0.06)] transition duration-200 hover:-translate-y-0.5 hover:shadow-[0_16px_30px_rgba(18,23,33,0.12)]"
       data-testid="feed-card"
       tabIndex={0}
       id={`card-trigger-${item.id}`}
@@ -79,37 +94,52 @@ export function FeedCard({
         >
           {status === 'loading' ? <Skeleton height={180} /> : null}
           {status === 'error' ? (
-            <div className="grid min-h-[140px] h-full w-full place-items-center bg-[#f4f4f5] text-xs text-[#6b7280]">
-              Image unavailable
+            <div className="grid h-full min-h-[140px] w-full place-items-center bg-[#f4f4f5] text-xs text-[#6b7280]">
+              图片加载失败
             </div>
           ) : null}
           <img
-            className={`block w-full transition-transform duration-200 ${
+            className={`block w-full transition duration-300 ${
               status === 'ready' ? 'opacity-100' : 'opacity-0'
-            }`}
+            } group-hover:scale-[1.02]`}
             src={item.imageUrl}
             alt={item.title}
             loading="lazy"
-            onLoad={() => setStatus('ready')}
+            onLoad={() => {
+              if (timeoutRef.current != null) {
+                window.clearTimeout(timeoutRef.current)
+              }
+              setStatus('ready')
+            }}
             onError={() => setStatus('error')}
           />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-12 bg-gradient-to-t from-black/25 to-transparent" />
         </div>
         <div className="px-3 pb-2 pt-2.5">
-          <h3 className="m-0 text-[15px] leading-[1.45]">{item.title}</h3>
-          <p className="mb-0 mt-1.5 text-xs text-[#9ca3af]">@{item.authorName}</p>
-          <p className="my-1.5 text-[13px] leading-[1.4] text-[var(--text-muted)]">
+          <h3 className="m-0 text-[15px] font-semibold leading-[1.45]">{item.title}</h3>
+          <p className="mb-0 mt-1.5 text-[13px] leading-[1.45] text-[var(--text-muted)]">
             {item.description}
           </p>
+          <div className="mt-2 flex items-center gap-2 text-xs">
+            <span className="grid h-7 w-7 place-items-center rounded-full bg-[#f3f4f7] font-semibold text-[#6c727f]">
+              {item.authorName.slice(0, 1)}
+            </span>
+            <span className="text-[#666f7b]">{item.authorName}</span>
+          </div>
         </div>
       </Link>
-      <div className="flex items-center justify-between gap-2 px-3 pb-3">
+      <div className="flex items-center justify-between gap-2 border-t border-[var(--border)] px-3 py-2.5">
         <span className="rounded-full bg-[#f3f4f6] px-2 py-1 text-[11px] text-[#6b7280]">
           {item.category}
         </span>
         <div className="inline-flex flex-wrap justify-end gap-1.5">
           <button
             type="button"
-            className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[var(--accent)]"
+            className={`cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
+              isFavorite
+                ? 'border-[#ffd4dc] bg-[#fff1f4] text-[var(--accent)]'
+                : 'border-[var(--border)] bg-white text-[#4d5561] hover:bg-[#f9fafb]'
+            }`}
             onClick={() =>
               onFavoriteToggle(item.id).catch((error: Error) => setActionError(error.message))
             }
@@ -120,7 +150,11 @@ export function FeedCard({
           </button>
           <button
             type="button"
-            className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[#374151]"
+            className={`cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
+              isLiked
+                ? 'border-[#ffd4dc] bg-[#fff1f4] text-[var(--accent)]'
+                : 'border-[var(--border)] bg-white text-[#374151] hover:bg-[#f9fafb]'
+            }`}
             onClick={() =>
               onLikeToggle(item.id).catch((error: Error) => setActionError(error.message))
             }
@@ -129,7 +163,11 @@ export function FeedCard({
           </button>
           <button
             type="button"
-            className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[#111827]"
+            className={`cursor-pointer rounded-full border px-2.5 py-1.5 text-xs transition ${
+              isFollowing
+                ? 'border-[#d5ecde] bg-[#effbf3] text-[#1f7a44]'
+                : 'border-[var(--border)] bg-white text-[#111827] hover:bg-[#f9fafb]'
+            }`}
             onClick={() =>
               onFollowToggle(item.authorId).catch((error: Error) => setActionError(error.message))
             }
