@@ -1,6 +1,5 @@
 import type { ChangeEvent } from 'react'
 
-import styles from './FeedToolbar.module.css'
 import type { Category, FeedFilters } from '../../types/content'
 import { Button } from '../../ui/Button'
 import { Input } from '../../ui/Input'
@@ -39,7 +38,7 @@ export function FeedToolbar({ filters, total, loaded, onFilterChange, onReset }:
 
   return (
     <section>
-      <div className={styles.toolbar}>
+      <div className="mb-3 grid grid-cols-[1fr_180px_auto] items-end gap-3 max-[860px]:grid-cols-1">
         <Input
           id="search"
           label="搜索"
@@ -49,8 +48,13 @@ export function FeedToolbar({ filters, total, loaded, onFilterChange, onReset }:
           data-testid="search-input"
         />
         <label>
-          <span className={styles.meta}>分类</span>
-          <select value={filters.category} onChange={onCategoryChange} aria-label="分类筛选">
+          <span className="text-sm text-[var(--text-muted)]">分类</span>
+          <select
+            value={filters.category}
+            onChange={onCategoryChange}
+            aria-label="分类筛选"
+            className="mt-1.5 w-full rounded-full border border-[var(--border)] bg-white px-3 py-2.5 text-sm"
+          >
             {categories.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -62,7 +66,7 @@ export function FeedToolbar({ filters, total, loaded, onFilterChange, onReset }:
           重置条件
         </Button>
       </div>
-      <p className={styles.meta}>
+      <p className="text-sm text-[var(--text-muted)]">
         已渲染 {loaded} 条 / 命中 {total} 条
       </p>
     </section>

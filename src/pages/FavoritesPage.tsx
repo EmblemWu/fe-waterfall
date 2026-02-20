@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
 
-import styles from './FavoritesPage.module.css'
 import { useSocialContext } from '../features/social/SocialContext'
 import { CONTENT_DATASET } from '../lib/mockData'
 import { Button } from '../ui/Button'
@@ -25,15 +24,17 @@ export function FavoritesPage() {
   }
 
   return (
-    <section className={styles.page}>
+    <section className="grid gap-3">
       {actionError ? (
         <EmptyState
           title="操作失败"
           description={actionError === 'LOGIN_REQUIRED' ? '请先登录。' : '请重试。'}
         />
       ) : null}
-      <div className={styles.header}>
-        <h1 data-testid="favorites-title">我的收藏 ({favorites.length})</h1>
+      <div className="flex items-center justify-between gap-3 max-[720px]:flex-col max-[720px]:items-start">
+        <h1 className="m-0 text-[26px] tracking-[0.2px]" data-testid="favorites-title">
+          我的收藏 ({favorites.length})
+        </h1>
         <Button
           tone="danger"
           onClick={() => removeManyFavorites(favorites.map((item) => item.id))}
@@ -42,17 +43,22 @@ export function FavoritesPage() {
           清空本页收藏
         </Button>
       </div>
-      <p style={{ margin: 0, color: 'var(--text-muted)' }}>
+      <p className="m-0 text-sm text-[var(--text-muted)]">
         本地总收藏数：{recentFavoriteCount}（仅展示前 200 条）
       </p>
-      <div className={styles.list}>
+      <div className="grid gap-2.5">
         {favorites.map((item) => (
-          <Card key={item.id} className="favorite-card">
-            <div className={styles.row}>
+          <Card key={item.id}>
+            <div className="flex items-start justify-between gap-3 p-3 max-[720px]:flex-col max-[720px]:items-start">
               <div>
                 <strong>{item.title}</strong>
-                <p className={styles.desc}>{item.description}</p>
-                <Link to={`/explore/${item.id}`}>查看详情</Link>
+                <p className="mb-2 mt-1 text-sm text-[var(--text-muted)]">{item.description}</p>
+                <Link
+                  className="text-sm font-semibold text-[var(--accent)]"
+                  to={`/explore/${item.id}`}
+                >
+                  查看详情
+                </Link>
               </div>
               <Button
                 tone="ghost"

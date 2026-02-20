@@ -1,5 +1,3 @@
-import styles from './PerformancePanel.module.css'
-
 interface PerformancePanelProps {
   rendered: number
   total: number
@@ -16,7 +14,10 @@ export function PerformancePanel({
   virtualizationEnabled,
 }: PerformancePanelProps) {
   return (
-    <aside className={styles.panel} aria-live="polite">
+    <aside
+      className="fixed bottom-3 right-3 z-30 rounded-xl bg-black/80 px-3 py-2 text-xs text-white"
+      aria-live="polite"
+    >
       {virtualizationEnabled != null ? (
         <div>Virtualization: {virtualizationEnabled ? 'ON' : 'OFF'}</div>
       ) : null}

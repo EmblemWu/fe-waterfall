@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import styles from './SearchPage.module.css'
 import { useFeed } from '../features/feed/useFeed'
 import { VirtualizedMasonry } from '../features/feed/VirtualizedMasonry'
 import { useSocialContext } from '../features/social/SocialContext'
@@ -85,9 +84,9 @@ export function SearchPage() {
   }
 
   return (
-    <section className={styles.page}>
-      <h1>搜索</h1>
-      <div className={styles.row}>
+    <section className="grid gap-3">
+      <h1 className="m-0 text-[26px] tracking-[0.2px]">搜索</h1>
+      <div className="grid grid-cols-[1fr_220px] gap-3 max-[860px]:grid-cols-1">
         <Input
           id="search-page-keyword"
           label="关键词"
@@ -98,17 +97,12 @@ export function SearchPage() {
           placeholder="搜索标题、标签、作者"
           data-testid="search-page-input"
         />
-        <label>
-          <span style={{ color: 'var(--text-muted)', fontSize: 14 }}>标签</span>
+        <label className="flex flex-col gap-1.5">
+          <span className="text-[13px] text-[var(--text-muted)]">标签</span>
           <select
             value={tag}
             onChange={(event) => setTag(event.currentTarget.value)}
-            style={{
-              marginTop: 6,
-              padding: '8px 10px',
-              borderRadius: 8,
-              border: '1px solid var(--border)',
-            }}
+            className="rounded-full border border-[var(--border)] bg-white px-3 py-2.5 text-sm"
           >
             {tagOptions.map((option) => (
               <option key={option} value={option}>
@@ -121,13 +115,13 @@ export function SearchPage() {
 
       {history.length > 0 ? (
         <div>
-          <p style={{ margin: '0 0 8px', color: 'var(--text-muted)' }}>搜索历史</p>
-          <div className={styles.history}>
+          <p className="mb-2 mt-0 text-sm text-[var(--text-muted)]">搜索历史</p>
+          <div className="flex flex-wrap items-center gap-2">
             {history.map((keyword) => (
               <button
                 key={keyword}
                 type="button"
-                className={styles.chip}
+                className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-3 py-1.5 text-sm transition hover:bg-[#f7f7f7]"
                 onClick={() => setFilters((prev) => ({ ...prev, query: keyword }))}
               >
                 {keyword}

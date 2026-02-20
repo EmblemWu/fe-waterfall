@@ -1,4 +1,3 @@
-import styles from './VirtualizedMasonry.module.css'
 import { FeedCard } from './FeedCard'
 import { PerformancePanel } from './PerformancePanel'
 import { useVirtualMasonry } from './useVirtualMasonry'
@@ -47,12 +46,12 @@ export function VirtualizedMasonry({
   const renderPositions = enableVirtualization ? visiblePositions : layout.positions
 
   return (
-    <section ref={containerRef} className={styles.container} aria-label="内容流">
-      <div className={styles.viewport} style={{ height: layout.totalHeight }}>
+    <section ref={containerRef} className="relative w-full" aria-label="内容流">
+      <div className="relative w-full" style={{ height: layout.totalHeight }}>
         {renderPositions.map((position) => (
           <div
             key={position.id}
-            className={styles.item}
+            className="absolute will-change-transform [contain:layout_style_paint]"
             style={{
               width: position.width,
               transform: `translate3d(${position.x}px, ${position.y}px, 0)`,
@@ -72,7 +71,7 @@ export function VirtualizedMasonry({
           </div>
         ))}
       </div>
-      <p style={{ color: 'var(--text-muted)', fontSize: 12 }}>
+      <p className="text-xs text-[var(--text-muted)]">
         {enableVirtualization ? '虚拟渲染' : '全量渲染'}: 当前渲染 {renderPositions.length} / 总计{' '}
         {items.length}，高度缓存 {cacheSize}
       </p>

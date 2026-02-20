@@ -1,8 +1,7 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
 
-import styles from './FeedCard.module.css'
 import { fetchDetail } from './api'
 import type { ContentItem } from '../../types/content'
 import { Skeleton } from '../../ui/Skeleton'
@@ -55,13 +54,13 @@ export function FeedCard({
   return (
     <article
       ref={rootRef}
-      className={styles.card}
+      className="overflow-hidden rounded-[14px] border border-[var(--border)] bg-[var(--surface)] shadow-[0_2px_10px_rgba(0,0,0,0.05)] transition-transform duration-200 hover:-translate-y-px"
       data-testid="feed-card"
       tabIndex={0}
       id={`card-trigger-${item.id}`}
     >
       <Link
-        className={styles.mainLink}
+        className="block text-inherit no-underline"
         to={`/explore/${item.id}`}
         state={{
           backgroundLocation: location,
@@ -75,13 +74,19 @@ export function FeedCard({
         }}
       >
         <div
-          className={styles.mediaWrap}
+          className="relative w-full overflow-hidden bg-[#f0f0f0]"
           style={{ aspectRatio: `${item.imageWidth} / ${item.imageHeight}` }}
         >
           {status === 'loading' ? <Skeleton height={180} /> : null}
-          {status === 'error' ? <div className={styles.fallback}>Image unavailable</div> : null}
+          {status === 'error' ? (
+            <div className="grid min-h-[140px] h-full w-full place-items-center bg-[#f4f4f5] text-xs text-[#6b7280]">
+              Image unavailable
+            </div>
+          ) : null}
           <img
-            className={`${styles.media} ${status === 'ready' ? styles.mediaReady : styles.mediaLoading}`}
+            className={`block w-full transition-transform duration-200 ${
+              status === 'ready' ? 'opacity-100' : 'opacity-0'
+            }`}
             src={item.imageUrl}
             alt={item.title}
             loading="lazy"
@@ -89,18 +94,22 @@ export function FeedCard({
             onError={() => setStatus('error')}
           />
         </div>
-        <div className={styles.meta}>
-          <h3 className={styles.title}>{item.title}</h3>
-          <p className={styles.author}>@{item.authorName}</p>
-          <p className={styles.desc}>{item.description}</p>
+        <div className="px-3 pb-2 pt-2.5">
+          <h3 className="m-0 text-[15px] leading-[1.45]">{item.title}</h3>
+          <p className="mb-0 mt-1.5 text-xs text-[#9ca3af]">@{item.authorName}</p>
+          <p className="my-1.5 text-[13px] leading-[1.4] text-[var(--text-muted)]">
+            {item.description}
+          </p>
         </div>
       </Link>
-      <div className={styles.actionBar}>
-        <span className={styles.tag}>{item.category}</span>
-        <div className={styles.actions}>
+      <div className="flex items-center justify-between gap-2 px-3 pb-3">
+        <span className="rounded-full bg-[#f3f4f6] px-2 py-1 text-[11px] text-[#6b7280]">
+          {item.category}
+        </span>
+        <div className="inline-flex flex-wrap justify-end gap-1.5">
           <button
             type="button"
-            className={styles.favorite}
+            className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[var(--accent)]"
             onClick={() =>
               onFavoriteToggle(item.id).catch((error: Error) => setActionError(error.message))
             }
@@ -111,7 +120,7 @@ export function FeedCard({
           </button>
           <button
             type="button"
-            className={styles.like}
+            className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[#374151]"
             onClick={() =>
               onLikeToggle(item.id).catch((error: Error) => setActionError(error.message))
             }
@@ -120,7 +129,7 @@ export function FeedCard({
           </button>
           <button
             type="button"
-            className={styles.follow}
+            className="cursor-pointer rounded-full border border-[var(--border)] bg-white px-2.5 py-1.5 text-xs text-[#111827]"
             onClick={() =>
               onFollowToggle(item.authorId).catch((error: Error) => setActionError(error.message))
             }
@@ -129,7 +138,9 @@ export function FeedCard({
           </button>
         </div>
       </div>
-      {actionError ? <p className={styles.errorHint}>操作失败：{actionError}</p> : null}
+      {actionError ? (
+        <p className="mx-3 mb-2.5 mt-0 text-xs text-[var(--danger)]">操作失败：{actionError}</p>
+      ) : null}
     </article>
   )
 }
